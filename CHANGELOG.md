@@ -6,6 +6,24 @@
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
+## [1.2.2] -- 2026-04-18
+
+<img src="https://img.shields.io/badge/-Updated_Screenshot-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-VSIX_Release-58a6ff?style=flat-square">
+
+- **Updated tooltip screenshot** with real photo from actual UI
+- **GitHub Release** created with VSIX attachment
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+
+## [1.2.1] -- 2026-04-18
+
+<img src="https://img.shields.io/badge/-Premium_Logo-58a6ff?style=flat-square">
+
+- **Premium logo** -- bolt + wave + WINDSURF QUOTA text, no dollar sign
+- **PNG icon** generated from SVG for Marketplace compatibility
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+
 ## [1.2.0] -- 2026-04-18
 
 <img src="https://img.shields.io/badge/-Premium_Logo-58a6ff?style=flat-square"> <img src="https://img.shields.io/badge/-Ocean_Banners-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Activity_Graph-a371f7?style=flat-square"> <img src="https://img.shields.io/badge/-Star_Badges-d29922?style=flat-square">
@@ -35,7 +53,7 @@
 <img src="https://img.shields.io/badge/-Real_Screenshots-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Overage_Fix-58a6ff?style=flat-square"> <img src="https://img.shields.io/badge/-README_Cleanup-d29922?style=flat-square">
 
 - **Real screenshots** from actual UI (`widget.png`, `tooltip.png`)
-- **Overage shows "used"** -- `$38.78 used` instead of just `$38.78`
+- **Overage shows "remaining"** -- `$38.78 remaining` instead of just `$38.78`
 - **Removed Detail Panel** from README (not currently shown in UI)
 - **Renamed images** -- `statusbar.png` → `widget.png`, deleted `detail-panel.png`
 - **What's Tracked table** simplified to Status Bar + Tooltip columns only

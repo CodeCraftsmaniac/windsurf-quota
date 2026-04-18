@@ -5,4 +5,3 @@ __pycache__/
 scripts/
 *.vsix
 node_modules/
-icon.svg
