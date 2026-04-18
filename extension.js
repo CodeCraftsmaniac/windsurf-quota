@@ -112,7 +112,7 @@ function formatResetTimeFull(date) {
     return date.toLocaleString();
 }
 
-// ─── SVG Icon Helpers (no emojis — digital SVG everywhere) ────────────────────
+// ─── SVG Icon Helpers (digital SVG everywhere) ─────────────────────────────────
 
 const SVG_ICONS = {
     wave: (s=14) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round"><path d="M2 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/></svg>`,
@@ -124,12 +124,12 @@ const SVG_ICONS = {
     live: (s=8) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#2ea043"/><circle cx="12" cy="12" r="4" fill="#3fb950"/></svg>`,
 };
 
-function svgIcon(name, size) {
+function imgIcon(name, size) {
     const svg = SVG_ICONS[name](size);
-    return `![](${'data:image/svg+xml,' + encodeURIComponent(svg)})`;
+    return `<img src="data:image/svg+xml,${encodeURIComponent(svg)}" width="${size}" height="${size}" style="vertical-align:middle">`;
 }
 
-function svgBar(pct, w = 200, h = 14) {
+function imgBar(pct, w = 160, h = 12) {
     const fillW = Math.max(Math.round(pct * w / 100), 4);
     const colors = pct >= 50
         ? ['#238636', '#2ea043', '#3fb950']
@@ -145,17 +145,7 @@ function svgBar(pct, w = 200, h = 14) {
         + `<rect width="${w}" height="${h}" rx="${h/2}" fill="#30363d"/>`
         + `<rect width="${fillW}" height="${h}" rx="${h/2}" fill="url(#b)"/>`
         + `</svg>`;
-    return `![${pct}%](data:image/svg+xml,${encodeURIComponent(svg)})`;
-}
-
-function svgMiniBar(pct, w = 100, h = 6) {
-    const fillW = Math.max(Math.round(pct * w / 100), 2);
-    const c = pct >= 50 ? '#2ea043' : pct >= 20 ? '#d29922' : '#f85149';
-    const svg = `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">`
-        + `<rect width="${w}" height="${h}" rx="${h/2}" fill="#30363d"/>`
-        + `<rect width="${fillW}" height="${h}" rx="${h/2}" fill="${c}"/>`
-        + `</svg>`;
-    return `![${pct}%](data:image/svg+xml,${encodeURIComponent(svg)})`;
+    return `<img src="data:image/svg+xml,${encodeURIComponent(svg)}" width="${w}" height="${h}" style="vertical-align:middle">`;
 }
 
 function buildTooltip(q) {
@@ -163,42 +153,47 @@ function buildTooltip(q) {
     md.isTrusted = true;
     md.supportHtml = true;
 
-    let lines = [];
-
-    lines.push(`**${svgIcon('wave',14)} ${q.planName} Plan**  --  ${q.email}`);
-    lines.push('');
-
-    if (!q.hideDaily && q.dailyRemaining !== null) {
-        lines.push(`${svgIcon('sun',12)} **Daily**   ${svgBar(q.dailyRemaining)}   **${q.dailyRemaining}%**`);
-        lines.push(`${svgIcon('clock',10)} Resets in ${formatResetTime(q.dailyResetAt)}`);
-        lines.push('');
-    }
-
-    if (!q.hideWeekly && q.weeklyRemaining !== null) {
-        lines.push(`${svgIcon('cal',12)} **Weekly**  ${svgBar(q.weeklyRemaining)}  **${q.weeklyRemaining}%**`);
-        lines.push(`${svgIcon('clock',10)} Resets in ${formatResetTime(q.weeklyResetAt)}`);
-        lines.push('');
-    }
+    const BAR_W = 160, BAR_H = 12;
+    const row = (icon, label, pct, detail) => {
+        const bar = imgBar(pct, BAR_W, BAR_H);
+        return `<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span style="min-width:90px;display:flex;align-items:center;gap:4px">${icon} <b>${label}</b></span>${bar}<span style="min-width:40px;text-align:right"><b>${pct}%</b></span><span style="color:#8b949e;font-size:11px;margin-left:4px">${detail}</span></div>`;
+    };
 
     const msgPct = q.totalMessages > 0 ? Math.round((q.remainingMessages / q.totalMessages) * 100) : 0;
     const flowPct = q.totalFlowActions > 0 ? Math.round((q.remainingFlowActions / q.totalFlowActions) * 100) : 0;
 
-    lines.push('---');
-    lines.push(`${svgIcon('bolt',12)} **CASCADE**`);
-    lines.push(`Messages  ${svgMiniBar(msgPct)}  **${q.remainingMessages}** / ${q.totalMessages}`);
-    lines.push(`Flows     ${svgMiniBar(flowPct)}  **${q.remainingFlowActions}** / ${q.totalFlowActions}`);
+    let html = '';
+
+    // Header
+    html += `<div style="margin-bottom:8px;display:flex;align-items:center;gap:6px">${imgIcon('wave',16)} <b style="font-size:14px">${q.planName} Plan</b> <span style="color:#8b949e;font-size:11px">${q.email}</span></div>`;
+
+    // Quota rows -- same bar size, two-column layout
+    if (!q.hideDaily && q.dailyRemaining !== null) {
+        html += row(imgIcon('sun',12), 'Daily', q.dailyRemaining, `${imgIcon('clock',10)} ${formatResetTime(q.dailyResetAt)}`);
+    }
+    if (!q.hideWeekly && q.weeklyRemaining !== null) {
+        html += row(imgIcon('cal',12), 'Weekly', q.weeklyRemaining, `${imgIcon('clock',10)} ${formatResetTime(q.weeklyResetAt)}`);
+    }
+
+    // Cascade section
+    html += `<hr style="border:none;border-top:1px solid #30363d;margin:8px 0">`;
+    html += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">${imgIcon('bolt',12)} <b style="color:#58a6ff">CASCADE</b></div>`;
+    html += row('', 'Messages', msgPct, `${q.remainingMessages} / ${q.totalMessages}`);
+    html += row('', 'Flows', flowPct, `${q.remainingFlowActions} / ${q.totalFlowActions}`);
     if (q.totalFlexCredits > 0) {
-        lines.push(`Flex      **${q.remainingFlexCredits}** / ${q.totalFlexCredits}`);
+        html += `<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span style="min-width:90px"><b>Flex</b></span>${imgBar(100, BAR_W, BAR_H)}<span style="min-width:40px;text-align:right"><b>${q.remainingFlexCredits}</b></span><span style="color:#8b949e;font-size:11px;margin-left:4px">/ ${q.totalFlexCredits}</span></div>`;
     }
 
+    // Overage
     if (parseFloat(q.overageBalanceDollars) > 0) {
-        lines.push(`${svgIcon('dollar',12)} **$${q.overageBalanceDollars}** overage`);
+        html += `<div style="margin-top:6px">${imgIcon('dollar',12)} <b>$${q.overageBalanceDollars}</b> <span style="color:#8b949e;font-size:11px">overage</span></div>`;
     }
 
-    lines.push('---');
-    lines.push(`${svgIcon('live',8)} Live -- Billing: ${q.billingStrategy}`);
+    // Footer
+    html += `<hr style="border:none;border-top:1px solid #30363d;margin:8px 0">`;
+    html += `<span style="display:flex;align-items:center;gap:4px;color:#8b949e;font-size:11px">${imgIcon('live',8)} Live -- Billing: ${q.billingStrategy}</span>`;
 
-    md.appendMarkdown(lines.join('\n\n'));
+    md.appendMarkdown(html);
     return md;
 }
 

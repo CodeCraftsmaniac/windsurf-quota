@@ -1,36 +1,41 @@
 # Windsurf Quota -- Real-Time AI Usage Tracker
 
+<img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/icon.svg" width="48" height="48" align="left" style="margin-right:12px">
+
 **Zero login. Zero config. Zero delay.**
 
 Track your Windsurf AI quotas the moment they change -- daily, weekly, Cascade messages, flow actions, and overage balance -- all in real-time.
+
+<br clear="left">
 
 [![Install from Marketplace](https://img.shields.io/badge/Install_from-Marketplace-0078D4?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=CodeCraftsmaniac.windsurf-quota)
 [![GitHub](https://img.shields.io/badge/View_on-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/CodeCraftsmaniac/windsurf-quota)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Real-Time](https://img.shields.io/badge/Updates-Real_Time-2ea043?style=for-the-badge&logo=lightning&logoColor=white)](https://github.com/CodeCraftsmaniac/windsurf-quota)
+[![Version](https://img.shields.io/badge/Version-1.0.6-58a6ff?style=for-the-badge)](https://github.com/CodeCraftsmaniac/windsurf-quota/releases)
 
 ---
 
 ## What You Get
 
-### Status Bar -- Always Visible
+### <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/statusbar.png" width="16" height="16" style="vertical-align:middle"> Status Bar -- Always Visible
 
-A compact, color-coded overview lives in your status bar at all times:
+A compact, color-coded overview lives in your status bar at all times. Hover for a premium tooltip with **SVG gradient progress bars** and digital icons.
 
 ![Status Bar](https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/statusbar.png)
 
-Shows your **Plan name**, **Daily %**, **Weekly %**, and **Overage balance** at a glance. Hover for a quick summary with SVG gradient progress bars.
+Shows your **Plan name**, **Daily %**, **Weekly %**, and **Overage balance** at a glance.
 
 ### Detail Panel -- Command Palette
 
-Open via command palette for a beautiful detail panel with animated progress bars, Cascade stats, and live indicators:
+Open via command palette for a premium detail panel with animated gradient progress bars, Cascade stats, and live indicators:
 
 ![Detail Panel](https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/detail-panel.png)
 
-- **Plan badge** with gradient styling
-- **Daily quota** -- animated progress bar + reset timer
-- **Weekly quota** -- animated progress bar + reset timer
-- **Cascade** -- messages, flow actions, flex credits with mini progress bars
+- **Plan badge** with gradient styling and glow animation
+- **Daily quota** -- animated gradient progress bar + reset timer
+- **Weekly quota** -- animated gradient progress bar + reset timer
+- **Cascade** -- messages, flow actions, flex credits with mini gradient bars
 - **Overage balance** -- pay-per-use credits
 - **Live indicator** -- pulses when updating in real-time
 
@@ -61,7 +66,7 @@ code --install-extension CodeCraftsmaniac.windsurf-quota
 Download the [latest release](https://github.com/CodeCraftsmaniac/windsurf-quota/releases) and run:
 
 ```bash
-code --install-extension windsurf-quota-1.0.0.vsix
+code --install-extension windsurf-quota-1.0.6.vsix
 ```
 
 ### Option 3: Manual Install
@@ -71,10 +76,10 @@ code --install-extension windsurf-quota-1.0.0.vsix
 
 ```bash
 # Windows
-xcopy /E . "%USERPROFILE%\.windsurf\extensions\codecraftsmaniac.windsurf-quota-1.0.0-universal\"
+xcopy /E . "%USERPROFILE%\.windsurf\extensions\codecraftsmaniac.windsurf-quota-1.0.6-universal\"
 
 # macOS / Linux
-cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.0-universal/
+cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.6-universal/
 ```
 
 3. **Restart Windsurf IDE** -- the widget appears in the status bar!
@@ -104,16 +109,16 @@ cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.0-universal/
 | Metric | Where It Shows |
 |:-------|:---------------|
 | **Plan Name** (Free/Pro/Ultimate/Team) | Status bar + Detail panel |
-| **Daily Quota %** | Status bar + Animated bar |
-| **Weekly Quota %** | Status bar + Animated bar |
-| **Daily Reset Timer** | Detail panel |
-| **Weekly Reset Timer** | Detail panel |
-| **Cascade Messages** (used/total/remaining) | Detail panel |
-| **Flow Actions** (used/total/remaining) | Detail panel |
-| **Flex Credits** (used/total/remaining) | Detail panel |
+| **Daily Quota %** | Status bar + Gradient bar |
+| **Weekly Quota %** | Status bar + Gradient bar |
+| **Daily Reset Timer** | Tooltip + Detail panel |
+| **Weekly Reset Timer** | Tooltip + Detail panel |
+| **Cascade Messages** (used/total/remaining) | Tooltip + Detail panel |
+| **Flow Actions** (used/total/remaining) | Tooltip + Detail panel |
+| **Flex Credits** (used/total/remaining) | Tooltip + Detail panel |
 | **Overage Balance** ($) | Status bar + Detail panel |
-| **Billing Strategy** | Detail panel |
-| **Account Email** | Detail panel |
+| **Billing Strategy** | Tooltip + Detail panel |
+| **Account Email** | Tooltip + Detail panel |
 
 ---
 
@@ -121,9 +126,9 @@ cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.0-universal/
 
 | Range | Color | Meaning |
 |:------|:------|:--------|
-| >= 50% | Green | Plenty of quota left |
-| 20-49% | Yellow | Quota running low |
-| < 20% | Red | Quota nearly exhausted |
+| >= 50% | <img src="https://img.shields.io/badge/-Green-2ea043" style="vertical-align:middle"> | Plenty of quota left |
+| 20-49% | <img src="https://img.shields.io/badge/-Yellow-d29922" style="vertical-align:middle"> | Quota running low |
+| < 20% | <img src="https://img.shields.io/badge/-Red-f85149" style="vertical-align:middle"> | Quota nearly exhausted |
 
 ---
 
@@ -135,6 +140,7 @@ cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.0-universal/
 - **Real-time updates**: `fs.watch()` on the DB file -- fires instantly on change
 - **Fallback**: mtime polling every 2s + interval poll every 15s
 - **Python required**: Uses Python to read SQLite (auto-detected)
+- **SVG icons**: All UI elements use digital SVG -- zero emojis, zero font dependency
 
 ---
 

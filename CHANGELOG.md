@@ -1,5 +1,14 @@
 # Change Log
 
+## [1.0.6] -- 2026-04-18
+
+### Premium Tooltip Layout + SVG Fix
+- **Fixed broken SVG icons** in tooltip -- switched from markdown `![]()` to HTML `<img>` tags
+- **Unified progress bar size** -- all bars same width (160px) and height (12px)
+- **Two-column layout** -- text labels left, progress bars right, aligned consistently
+- **SVG icons in docs** -- README and CHANGELOG use `<img>` with shields.io badges for color coding
+- **Version badge** added to README
+
 ## [1.0.5] -- 2026-04-18
 
 ### Digital SVG Icons -- Zero Emojis
