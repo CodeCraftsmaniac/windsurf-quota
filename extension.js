@@ -112,7 +112,22 @@ function formatResetTimeFull(date) {
     return date.toLocaleString();
 }
 
-// ─── Premium Tooltip Builder (SVG gradient bars via data URI) ───────────────────
+// ─── SVG Icon Helpers (no emojis — digital SVG everywhere) ────────────────────
+
+const SVG_ICONS = {
+    wave: (s=14) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round"><path d="M2 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/></svg>`,
+    sun: (s=12) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#e3b341" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-8-10H2m20 0h-2m-1.5-6.5L17 5m0 14l1.5-1.5M6 5L4.5 6.5M6 19L4.5 17.5"/></svg>`,
+    cal: (s=12) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#bc8cff" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4m-5 4h18"/></svg>`,
+    clock: (s=10) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+    bolt: (s=12) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="#58a6ff" stroke="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+    dollar: (s=12) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>`,
+    live: (s=8) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#2ea043"/><circle cx="12" cy="12" r="4" fill="#3fb950"/></svg>`,
+};
+
+function svgIcon(name, size) {
+    const svg = SVG_ICONS[name](size);
+    return `![](${'data:image/svg+xml,' + encodeURIComponent(svg)})`;
+}
 
 function svgBar(pct, w = 200, h = 14) {
     const fillW = Math.max(Math.round(pct * w / 100), 4);
@@ -150,18 +165,18 @@ function buildTooltip(q) {
 
     let lines = [];
 
-    lines.push(`**🌊 ${q.planName} Plan**  —  ${q.email}`);
+    lines.push(`**${svgIcon('wave',14)} ${q.planName} Plan**  --  ${q.email}`);
     lines.push('');
 
     if (!q.hideDaily && q.dailyRemaining !== null) {
-        lines.push(`☀ **Daily**   ${svgBar(q.dailyRemaining)}   **${q.dailyRemaining}%**`);
-        lines.push(`⏱ Resets in ${formatResetTime(q.dailyResetAt)}`);
+        lines.push(`${svgIcon('sun',12)} **Daily**   ${svgBar(q.dailyRemaining)}   **${q.dailyRemaining}%**`);
+        lines.push(`${svgIcon('clock',10)} Resets in ${formatResetTime(q.dailyResetAt)}`);
         lines.push('');
     }
 
     if (!q.hideWeekly && q.weeklyRemaining !== null) {
-        lines.push(`📅 **Weekly**  ${svgBar(q.weeklyRemaining)}  **${q.weeklyRemaining}%**`);
-        lines.push(`⏱ Resets in ${formatResetTime(q.weeklyResetAt)}`);
+        lines.push(`${svgIcon('cal',12)} **Weekly**  ${svgBar(q.weeklyRemaining)}  **${q.weeklyRemaining}%**`);
+        lines.push(`${svgIcon('clock',10)} Resets in ${formatResetTime(q.weeklyResetAt)}`);
         lines.push('');
     }
 
@@ -169,19 +184,19 @@ function buildTooltip(q) {
     const flowPct = q.totalFlowActions > 0 ? Math.round((q.remainingFlowActions / q.totalFlowActions) * 100) : 0;
 
     lines.push('---');
-    lines.push(`⚡ **CASCADE**`);
+    lines.push(`${svgIcon('bolt',12)} **CASCADE**`);
     lines.push(`Messages  ${svgMiniBar(msgPct)}  **${q.remainingMessages}** / ${q.totalMessages}`);
-    lines.push(`Flows　　 ${svgMiniBar(flowPct)}  **${q.remainingFlowActions}** / ${q.totalFlowActions}`);
+    lines.push(`Flows     ${svgMiniBar(flowPct)}  **${q.remainingFlowActions}** / ${q.totalFlowActions}`);
     if (q.totalFlexCredits > 0) {
-        lines.push(`Flex　　　**${q.remainingFlexCredits}** / ${q.totalFlexCredits}`);
+        lines.push(`Flex      **${q.remainingFlexCredits}** / ${q.totalFlexCredits}`);
     }
 
     if (parseFloat(q.overageBalanceDollars) > 0) {
-        lines.push(`💰 **$${q.overageBalanceDollars}** overage`);
+        lines.push(`${svgIcon('dollar',12)} **$${q.overageBalanceDollars}** overage`);
     }
 
     lines.push('---');
-    lines.push(`🟢 Live · Billing: ${q.billingStrategy}`);
+    lines.push(`${svgIcon('live',8)} Live -- Billing: ${q.billingStrategy}`);
 
     md.appendMarkdown(lines.join('\n\n'));
     return md;
@@ -224,7 +239,7 @@ async function updateStatusBar() {
             parts.push(`$${q.overageBalanceDollars}`);
         }
 
-        statusBarItem.text = `$(waves) ${q.planName} │ ${parts.join(' · ')}`;
+        statusBarItem.text = `$(waves) ${q.planName} | ${parts.join(' · ')}`;
 
         // Premium hover tooltip with colorful bars
         statusBarItem.tooltip = buildTooltip(q);
@@ -254,11 +269,11 @@ function showDetailsPanel() {
 
     detailPanel = vscode.window.createWebviewPanel(
         'windsurfQuotaDetails',
-        '🌊 Windsurf Quota',
+        'Windsurf Quota',
         vscode.ViewColumn.One,
         { enableScripts: true, retainContextWhenHidden: true, preserveFocus: true }
     );
-    detailPanel.iconPath = vscode.Uri.parse('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2358a6ff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>');
+    detailPanel.iconPath = vscode.Uri.parse('data:image/svg+xml,' + encodeURIComponent(SVG_ICONS.wave(24)));
     detailPanel.onDidDispose(() => { detailPanel = null; });
     updateDetailPanel();
 }
@@ -272,9 +287,9 @@ function updateDetailPanel() {
     }
 
     const dailyBar = !q.hideDaily && q.dailyRemaining !== null
-        ? makeBar('☀ Daily Quota', q.dailyRemaining, q.dailyResetAt) : '';
+        ? makeBar('Daily Quota', q.dailyRemaining, q.dailyResetAt, 'sun') : '';
     const weeklyBar = !q.hideWeekly && q.weeklyRemaining !== null
-        ? makeBar('📅 Weekly Quota', q.weeklyRemaining, q.weeklyResetAt) : '';
+        ? makeBar('Weekly Quota', q.weeklyRemaining, q.weeklyResetAt, 'cal') : '';
 
     const msgPct = q.totalMessages > 0 ? Math.round((q.remainingMessages / q.totalMessages) * 100) : 0;
     const flowPct = q.totalFlowActions > 0 ? Math.round((q.remainingFlowActions / q.totalFlowActions) * 100) : 0;
@@ -451,7 +466,7 @@ function updateDetailPanel() {
 
   <div class="card">
     <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px">
-      <span class="plan-badge plan-${q.planName.toLowerCase()}">🌊 ${q.planName}</span>
+      <span class="plan-badge plan-${q.planName.toLowerCase()}">${q.planName}</span>
       <span class="email">${q.email}</span>
     </div>
   </div>
@@ -460,7 +475,7 @@ function updateDetailPanel() {
   ${weeklyBar}
 
   <div class="card cascade-section">
-    <div class="cascade-title">⚡ CASCADE</div>
+    <div class="cascade-title">CASCADE</div>
     <div class="stat-grid">
       <div class="stat-item">
         <div class="stat-label">Messages</div>
@@ -490,11 +505,11 @@ function updateDetailPanel() {
   </div>
 
   <div class="footer-bar">
-    <span><span class="live-dot"></span> Live — real-time</span>
+    <span><span class="live-dot"></span> Live -- real-time</span>
     <span>Billing: ${q.billingStrategy}</span>
   </div>
 
-  <div class="footer-text">Windsurf Quota v1.0</div>
+  <div class="footer-text">Windsurf Quota v1.0.5</div>
 
 </div>
 </div>
@@ -503,19 +518,20 @@ function updateDetailPanel() {
 </html>`;
 }
 
-function makeBar(label, pct, resetAt) {
+function makeBar(label, pct, resetAt, icon) {
     const color = pct >= 50 ? 'green' : pct >= 20 ? 'yellow' : 'red';
-    const resetText = resetAt ? `⏱ Resets in ${formatResetTime(resetAt)} (${formatResetTimeFull(resetAt)})` : '';
+    const resetText = resetAt ? `Resets in ${formatResetTime(resetAt)} (${formatResetTimeFull(resetAt)})` : '';
+    const iconSvg = icon ? SVG_ICONS[icon](16) : '';
     return `<div class="card">
   <div class="bar-wrap">
     <div class="bar-label">
-      <span class="bar-label-title">${label}</span>
+      <span class="bar-label-title">${iconSvg} ${label}</span>
       <span class="bar-label-pct" style="color:var(--vscode-foreground)">${pct}%</span>
     </div>
     <div class="bar-track">
       <div class="bar-fill bar-${color}" style="width:${Math.max(pct, 3)}%">${pct}%</div>
     </div>
-    ${resetText ? `<div class="bar-reset"><span class="clock">⏱</span> ${resetText}</div>` : ''}
+    ${resetText ? `<div class="bar-reset"><span class="clock"></span>${resetText}</div>` : ''}
   </div>
 </div>`;
 }

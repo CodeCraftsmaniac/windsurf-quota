@@ -1,8 +1,8 @@
 {
   "name": "windsurf-quota",
-  "displayName": "🌊 Windsurf Quota — Real-Time AI Usage Tracker",
+  "displayName": "Windsurf Quota -- Real-Time AI Usage Tracker",
   "description": "Track Windsurf AI quotas in real-time — daily, weekly, Cascade messages, flow actions, and overage balance. Zero login. Zero config. Click for full details.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "CodeCraftsmaniac",
   "license": "MIT",
   "homepage": "https://github.com/CodeCraftsmaniac/windsurf-quota#readme",
@@ -39,7 +39,7 @@
   "main": "./extension.js",
   "contributes": {
     "configuration": {
-      "title": "🌊 Windsurf Quota",
+      "title": "Windsurf Quota",
       "properties": {
         "windsurfQuota.refreshIntervalSeconds": {
           "type": "number",
@@ -56,11 +56,11 @@
     "commands": [
       {
         "command": "windsurfQuota.refresh",
-        "title": "🌊 Windsurf Quota: Refresh Now"
+        "title": "Windsurf Quota: Refresh Now"
       },
       {
         "command": "windsurfQuota.showDetails",
-        "title": "🌊 Windsurf Quota: Show Details"
+        "title": "Windsurf Quota: Show Details"
       }
     ]
   }

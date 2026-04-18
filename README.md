@@ -1,8 +1,8 @@
-# 🌊 Windsurf Quota — Real-Time AI Usage Tracker
+# Windsurf Quota -- Real-Time AI Usage Tracker
 
 **Zero login. Zero config. Zero delay.**
 
-Track your Windsurf AI quotas the moment they change — daily, weekly, Cascade messages, flow actions, and overage balance — all in real-time.
+Track your Windsurf AI quotas the moment they change -- daily, weekly, Cascade messages, flow actions, and overage balance -- all in real-time.
 
 [![Install from Marketplace](https://img.shields.io/badge/Install_from-Marketplace-0078D4?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=CodeCraftsmaniac.windsurf-quota)
 [![GitHub](https://img.shields.io/badge/View_on-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/CodeCraftsmaniac/windsurf-quota)
@@ -11,40 +11,40 @@ Track your Windsurf AI quotas the moment they change — daily, weekly, Cascade 
 
 ---
 
-## ✨ What You Get
+## What You Get
 
-### 📊 Status Bar — Always Visible
+### Status Bar -- Always Visible
 
 A compact, color-coded overview lives in your status bar at all times:
 
 ![Status Bar](https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/statusbar.png)
 
-Shows your **Plan name**, **Daily %**, **Weekly %**, and **Overage balance** at a glance. Hover for a quick summary. **Click for full details.**
+Shows your **Plan name**, **Daily %**, **Weekly %**, and **Overage balance** at a glance. Hover for a quick summary with SVG gradient progress bars.
 
-### 🎯 Detail Panel — Click to Expand
+### Detail Panel -- Command Palette
 
-Click the status bar widget to open a beautiful detail panel with animated progress bars, Cascade stats, and live indicators:
+Open via command palette for a beautiful detail panel with animated progress bars, Cascade stats, and live indicators:
 
 ![Detail Panel](https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/detail-panel.png)
 
-- 🌊 **Plan badge** with gradient styling
-- ☀ **Daily quota** — animated progress bar + reset timer
-- 📅 **Weekly quota** — animated progress bar + reset timer
-- ⚡ **Cascade** — messages, flow actions, flex credits with mini progress bars
-- 💰 **Overage balance** — pay-per-use credits
-- 🟢 **Live indicator** — pulses when updating in real-time
+- **Plan badge** with gradient styling
+- **Daily quota** -- animated progress bar + reset timer
+- **Weekly quota** -- animated progress bar + reset timer
+- **Cascade** -- messages, flow actions, flex credits with mini progress bars
+- **Overage balance** -- pay-per-use credits
+- **Live indicator** -- pulses when updating in real-time
 
 ---
 
-## 🎬 How It Works
+## How It Works
 
-The extension reads Windsurf's **own cached data** from the local `state.vscdb` SQLite database. The IDE already keeps this data fresh on every heartbeat — so the widget updates the instant anything changes.
+The extension reads Windsurf's **own cached data** from the local `state.vscdb` SQLite database. The IDE already keeps this data fresh on every heartbeat -- so the widget updates the instant anything changes.
 
-> 🚫 No API calls · 🚫 No browser automation · 🚫 No Selenium · 🚫 No login · 🚫 No `.env` files
+> No API calls / No browser automation / No Selenium / No login / No `.env` files
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### Option 1: One-Click Install *(easiest)*
 
@@ -77,22 +77,20 @@ xcopy /E . "%USERPROFILE%\.windsurf\extensions\codecraftsmaniac.windsurf-quota-1
 cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.0-universal/
 ```
 
-3. **Restart Windsurf IDE** — the widget appears in the status bar!
+3. **Restart Windsurf IDE** -- the widget appears in the status bar!
 
 ---
 
-## 🎮 Commands
+## Commands
 
 | Command | What It Does |
 |:--------|:-------------|
-| `🌊 Windsurf Quota: Show Details` | Opens the detail panel with full breakdown |
-| `🌊 Windsurf Quota: Refresh Now` | Force-refresh quota data from DB |
-
-> 💡 **Click the status bar widget** to open details instantly!
+| `Windsurf Quota: Show Details` | Opens the detail panel with full breakdown |
+| `Windsurf Quota: Refresh Now` | Force-refresh quota data from DB |
 
 ---
 
-## ⚙️ Settings
+## Settings
 
 | Setting | Default | Description |
 |:--------|:--------|:------------|
@@ -101,7 +99,7 @@ cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.0-universal/
 
 ---
 
-## 📱 What's Tracked
+## What's Tracked
 
 | Metric | Where It Shows |
 |:-------|:---------------|
@@ -119,28 +117,28 @@ cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.0-universal/
 
 ---
 
-## 🎨 Color Coding
+## Color Coding
 
 | Range | Color | Meaning |
 |:------|:------|:--------|
-| ≥ 50% | 🟢 Green | Plenty of quota left |
-| 20–49% | 🟡 Yellow | Quota running low |
-| < 20% | 🔴 Red | Quota nearly exhausted |
+| >= 50% | Green | Plenty of quota left |
+| 20-49% | Yellow | Quota running low |
+| < 20% | Red | Quota nearly exhausted |
 
 ---
 
-## 🔧 Technical Details
+## Technical Details
 
 - **Data source**: Windsurf's `state.vscdb` SQLite database
-  - Key: `windsurf.settings.cachedPlanInfo` — quota data
-  - Key: `codeium.windsurf` — account info
-- **Real-time updates**: `fs.watch()` on the DB file — fires instantly on change
+  - Key: `windsurf.settings.cachedPlanInfo` -- quota data
+  - Key: `codeium.windsurf` -- account info
+- **Real-time updates**: `fs.watch()` on the DB file -- fires instantly on change
 - **Fallback**: mtime polling every 2s + interval poll every 15s
 - **Python required**: Uses Python to read SQLite (auto-detected)
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! See the [GitHub repo](https://github.com/CodeCraftsmaniac/windsurf-quota) for details.
 
@@ -152,12 +150,10 @@ Contributions are welcome! See the [GitHub repo](https://github.com/CodeCraftsma
 
 ---
 
-## 📝 License
+## License
 
-MIT © [CodeCraftsmaniac](https://github.com/CodeCraftsmaniac)
+MIT (c) [CodeCraftsmaniac](https://github.com/CodeCraftsmaniac)
 
 ---
 
-**⭐ If this extension helps you, [give it a star on GitHub](https://github.com/CodeCraftsmaniac/windsurf-quota)! ⭐**
-
-Made with ❤️ for the Windsurf community
+If this extension helps you, [give it a star on GitHub](https://github.com/CodeCraftsmaniac/windsurf-quota)!
