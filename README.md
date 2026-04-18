@@ -69,7 +69,7 @@
 
 ## Features
 
-<table>
+<table align="center">
   <tr>
     <td><img src="https://img.shields.io/badge/-Real__Time-2ea043?style=flat-square"></td>
     <td><b>Instant updates</b> via fs.watch() -- fires the moment the DB changes</td>
@@ -100,6 +100,8 @@
 
 ## Quota Breakdown
 
+<div align="center">
+
 | Metric | Status Bar | Tooltip | Format |
 |:-------|:----------:|:-------:|:-------|
 | **Plan Name** | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | Free / Pro / Ultimate / Team |
@@ -112,15 +114,21 @@
 | **Billing Strategy** | | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | quota / overage |
 | **Account Email** | | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | auto from DB |
 
+</div>
+
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Color Coding
+
+<div align="center">
 
 | Range | Status | Bar Color |
 |:------|:------:|:---------:|
 | >= 50% remaining | <img src="https://img.shields.io/badge/Safe-2ea043?style=flat-square"> | `██████████` |
 | 20-49% remaining | <img src="https://img.shields.io/badge/Low-d29922?style=flat-square"> | `██████████` |
 | < 20% remaining | <img src="https://img.shields.io/badge/Critical-f85149?style=flat-square"> | `██████████` |
+
+</div>
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
