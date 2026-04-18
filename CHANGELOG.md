@@ -1,5 +1,14 @@
 # Change Log
 
+## [1.1.0] -- 2026-04-18
+
+### Real Screenshots + Overage Fix + README Cleanup
+- **Real screenshots** from actual UI (widget.png, tooltip.png)
+- **Overage shows "used"** -- `$38.78 used` instead of just `$38.78`
+- **Removed Detail Panel** from README (not currently shown in UI)
+- **Renamed images** -- statusbar.png → widget.png, deleted detail-panel.png
+- **What's Tracked table** simplified to Status Bar + Tooltip columns only
+
 ## [1.0.9] -- 2026-04-18
 
 ### Premium README + Demo Images + Pre-formatted Tooltip

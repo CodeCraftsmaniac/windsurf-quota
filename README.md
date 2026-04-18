@@ -23,29 +23,21 @@
 
 ---
 
-## Status Bar -- Always Visible
+## Status Bar Widget
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/statusbar.png" alt="Status Bar" width="520">
+  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/widget.png" alt="Status Bar Widget">
 </p>
 
 A compact, color-coded overview lives in your status bar at all times. Shows your **Plan name**, **Daily %**, **Weekly %**, and **Overage balance** at a glance.
 
-## Hover Tooltip -- Instant Details
+## Hover Tooltip
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/tooltip.png" alt="Tooltip" width="480">
+  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/tooltip.png" alt="Tooltip">
 </p>
 
 Hover over the status bar widget for a premium tooltip with **Unicode block progress bars**, column-aligned layout, and live reset timers.
-
-## Detail Panel -- Full Breakdown
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/detail-panel.png" alt="Detail Panel" width="620">
-</p>
-
-Open via command palette for a premium detail panel with animated gradient progress bars, Cascade stats, and a pulsing live indicator.
 
 ---
 
@@ -57,7 +49,7 @@ Open via command palette for a premium detail panel with animated gradient progr
   <img src="https://img.shields.io/badge/-Zero_Config-a371f7?style=flat-square"> <b>Auto-detects</b> Windsurf's state.vscdb on Windows, macOS, and Linux<br>
   <img src="https://img.shields.io/badge/-Color_Coded-f85149?style=flat-square"> <b>Green / Yellow / Red</b> progress bars based on remaining quota<br>
   <img src="https://img.shields.io/badge/-Cascade-d29922?style=flat-square"> <b>Messages, Flow Actions, Flex Credits</b> tracked with mini bars<br>
-  <img src="https://img.shields.io/badge/-Overage-58a6ff?style=flat-square"> <b>Pay-per-use balance</b> shown in status bar and detail panel
+  <img src="https://img.shields.io/badge/-Overage-58a6ff?style=flat-square"> <b>Pay-per-use balance</b> shown in status bar and tooltip
 </p>
 
 ---
@@ -115,19 +107,19 @@ cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.9-universal/
 
 ## What's Tracked
 
-| Metric | Status Bar | Tooltip | Detail Panel |
-|:-------|:----------:|:-------:|:------------:|
-| **Plan Name** (Free/Pro/Ultimate/Team) | Y | Y | Y |
-| **Daily Quota %** | Y | Y | Y |
-| **Weekly Quota %** | Y | Y | Y |
-| **Daily Reset Timer** | | Y | Y |
-| **Weekly Reset Timer** | | Y | Y |
-| **Cascade Messages** (used/total/remaining) | | Y | Y |
-| **Flow Actions** (used/total/remaining) | | Y | Y |
-| **Flex Credits** (used/total/remaining) | | Y | Y |
-| **Overage Balance** ($) | Y | Y | Y |
-| **Billing Strategy** | | Y | Y |
-| **Account Email** | | Y | Y |
+| Metric | Status Bar | Tooltip |
+|:-------|:----------:|:-------:|
+| **Plan Name** (Free/Pro/Ultimate/Team) | Y | Y |
+| **Daily Quota %** | Y | Y |
+| **Weekly Quota %** | Y | Y |
+| **Daily Reset Timer** | | Y |
+| **Weekly Reset Timer** | | Y |
+| **Cascade Messages** (used/total/remaining) | | Y |
+| **Flow Actions** (used/total/remaining) | | Y |
+| **Flex Credits** (used/total/remaining) | | Y |
+| **Overage Balance** ($) | Y | Y |
+| **Billing Strategy** | | Y |
+| **Account Email** | | Y |
 
 ## Color Coding
 

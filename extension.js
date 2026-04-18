@@ -164,7 +164,7 @@ function buildTooltip(q) {
     // Overage
     if (parseFloat(q.overageBalanceDollars) > 0) {
         const ovPct = Math.min(Math.round(parseFloat(q.overageBalanceDollars) * 2), 100);
-        lines.push(`\uD83D\uDCB8 ${padR('Overage', 12)} [${bar(ovPct)}]        $${q.overageBalanceDollars}`);
+        lines.push(`\uD83D\uDCB8 ${padR('Overage', 12)} [${bar(ovPct)}]        $${q.overageBalanceDollars} used`);
     }
 
     // Wrap in <pre> to preserve exact spacing
@@ -479,7 +479,7 @@ function updateDetailPanel() {
     <span>Billing: ${q.billingStrategy}</span>
   </div>
 
-  <div class="footer-text">Windsurf Quota v1.0.9</div>
+  <div class="footer-text">Windsurf Quota v1.1.0</div>
 
 </div>
 </div>
