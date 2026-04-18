@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/icon.png" width="80" height="80">
+  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/icon.svg" width="120" height="120">
 </p>
 
 <h1 align="center">Windsurf Quota</h1>
@@ -34,9 +34,21 @@
   <img src="https://img.shields.io/badge/Overage-Balance-2ea043?style=flat-square">
 </p>
 
-<br>
+<p align="center">
+  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota/stargazers"><img src="https://img.shields.io/github/stars/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=58a6ff" alt="Stars"></a>
+  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota/fork"><img src="https://img.shields.io/github/forks/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=a371f7" alt="Forks"></a>
+  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota/issues"><img src="https://img.shields.io/github/issues/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=d29922" alt="Issues"></a>
+</p>
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+
+## Activity
+
+<p align="center">
+  <img src="https://repobeats.axiom.co/api/embed/8f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1.svg" alt="Repobeats analytics" width="100%">
+</p>
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Preview
 
@@ -51,7 +63,7 @@
   </tr>
 </table>
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Features
 
@@ -82,7 +94,7 @@
   </tr>
 </table>
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Quota Breakdown
 
@@ -98,7 +110,7 @@
 | **Billing Strategy** | | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | quota / overage |
 | **Account Email** | | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | auto from DB |
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Color Coding
 
@@ -108,7 +120,7 @@
 | 20-49% remaining | <img src="https://img.shields.io/badge/Low-d29922?style=flat-square"> | `██████████` |
 | < 20% remaining | <img src="https://img.shields.io/badge/Critical-f85149?style=flat-square"> | `██████████` |
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Installation
 
@@ -125,7 +137,7 @@ code --install-extension CodeCraftsmaniac.windsurf-quota
 Download the [latest release](https://github.com/CodeCraftsmaniac/windsurf-quota/releases) and run:
 
 ```bash
-code --install-extension windsurf-quota-1.1.0.vsix
+code --install-extension windsurf-quota-1.1.2.vsix
 ```
 
 ### Option 3: Manual
@@ -135,15 +147,15 @@ code --install-extension windsurf-quota-1.1.0.vsix
 
 ```bash
 # Windows
-xcopy /E . "%USERPROFILE%\.windsurf\extensions\codecraftsmaniac.windsurf-quota-1.1.0-universal\"
+xcopy /E . "%USERPROFILE%\.windsurf\extensions\codecraftsmaniac.windsurf-quota-1.1.2-universal\"
 
 # macOS / Linux
-cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.1.0-universal/
+cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.1.2-universal/
 ```
 
 3. **Restart Windsurf IDE** -- the widget appears in the status bar!
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Commands & Settings
 
@@ -157,7 +169,7 @@ cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.1.0-universal/
 | `windsurfQuota.refreshIntervalSeconds` | `15` | Fallback polling interval (seconds) |
 | `windsurfQuota.stateDbPath` | auto | Path to `state.vscdb` (auto-detected if empty) |
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Architecture
 
@@ -179,7 +191,7 @@ state.vscdb  ──── fs.watch() ────>  Real-time update
 - **Fallback**: mtime polling every 2s + interval poll every 15s
 - **Python required**: Uses Python to read SQLite (auto-detected)
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Contributing
 
@@ -191,7 +203,7 @@ state.vscdb  ──── fs.watch() ────>  Real-time update
   <img src="https://img.shields.io/badge/5-PR-a371f7?style=flat-square&logo=github">
 </p>
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge"><br>

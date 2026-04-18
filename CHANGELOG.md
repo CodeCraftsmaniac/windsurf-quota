@@ -4,7 +4,20 @@
   <img src="https://img.shields.io/badge/CHANGELOG-Windsurf_Quota-58a6ff?style=for-the-badge&labelColor=0d1117">
 </p>
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+
+## [1.2.0] -- 2026-04-18
+
+<img src="https://img.shields.io/badge/-Premium_Logo-58a6ff?style=flat-square"> <img src="https://img.shields.io/badge/-Ocean_Banners-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Activity_Graph-a371f7?style=flat-square"> <img src="https://img.shields.io/badge/-Star_Badges-d29922?style=flat-square">
+
+- **Premium SVG logo** -- bolt + wave + gradient bars with ocean ring and glow
+- **Rainbow gradient dividers** between every section
+- **Activity graph** via Repobeats analytics embed
+- **Star / Fork / Issues badges** with live GitHub counts
+- **Logo now SVG** -- crisp at any resolution in README
+- **Overage text** changed to "remaining" (balance = remaining amount)
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## [1.1.1] -- 2026-04-18
 
