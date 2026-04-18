@@ -45,7 +45,9 @@
 ## Activity
 
 <p align="center">
-  <img src="https://repobeats.axiom.co/api/embed/8f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1.svg" alt="Repobeats analytics" width="100%">
+  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota/graphs/commit-activity"><img src="https://img.shields.io/github/commit-activity/t/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=58a6ff" alt="Commit Activity"></a>
+  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota/releases"><img src="https://img.shields.io/github/releases/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=2ea043" alt="Releases"></a>
+  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota/last-commit"><img src="https://img.shields.io/github/last-commit/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=a371f7" alt="Last Commit"></a>
 </p>
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
