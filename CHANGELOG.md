@@ -6,6 +6,26 @@
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
+## [2.0.0] -- 2026-04-18
+
+<img src="https://img.shields.io/badge/-Major_Release-ff7b72?style=flat-square"> <img src="https://img.shields.io/badge/-Premium_Overhaul-58a6ff?style=flat-square"> <img src="https://img.shields.io/badge/-Centered_Layout-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Compressed_Images-a371f7?style=flat-square">
+
+- **Major version bump** to 2.0.0 -- complete UI and documentation overhaul
+- **Premium SVG logo** -- bolt + wave + WINDSURF QUOTA text with ocean gradient ring
+- **Centered layout** -- all README sections centered for premium look
+- **Rainbow gradient dividers** between every section
+- **Star / Fork / Issues / Activity badges** with live GitHub data
+- **Compressed tooltip image** -- 1.9 MB to 525 KB
+- **Overage shows "remaining"** in tooltip
+- **YES badges** in Quota Breakdown table
+- **Color Coding table** with Safe/Low/Critical badges
+- **Architecture diagram** with ASCII flow
+- **activationEvents** optimized to `onStartupFinished`
+- **GitHub topics** set for discoverability
+- **GitHub Releases** with VSIX attachments
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+
 ## [1.2.2] -- 2026-04-18
 
 <img src="https://img.shields.io/badge/-Updated_Screenshot-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-VSIX_Release-58a6ff?style=flat-square">

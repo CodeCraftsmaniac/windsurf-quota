@@ -149,7 +149,7 @@ code --install-extension CodeCraftsmaniac.windsurf-quota
 Download the [latest release](https://github.com/CodeCraftsmaniac/windsurf-quota/releases) and run:
 
 ```bash
-code --install-extension windsurf-quota-1.2.2.vsix
+code --install-extension windsurf-quota-2.0.0.vsix
 ```
 
 ### Option 3: Manual
@@ -159,10 +159,10 @@ code --install-extension windsurf-quota-1.2.2.vsix
 
 ```bash
 # Windows
-xcopy /E . "%USERPROFILE%\.windsurf\extensions\codecraftsmaniac.windsurf-quota-1.2.2-universal\"
+xcopy /E . "%USERPROFILE%\.windsurf\extensions\codecraftsmaniac.windsurf-quota-2.0.0-universal\"
 
 # macOS / Linux
-cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.2.2-universal/
+cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-2.0.0-universal/
 ```
 
 3. **Restart Windsurf IDE** -- the widget appears in the status bar!
