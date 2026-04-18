@@ -134,6 +134,8 @@
 
 ## Installation
 
+<div align="center">
+
 ### Option 1: Marketplace *(recommended)*
 
 Search **"Windsurf Quota"** in the Extensions panel, then click **Install**.
@@ -165,9 +167,13 @@ cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.2.2-universal/
 
 3. **Restart Windsurf IDE** -- the widget appears in the status bar!
 
+</div>
+
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Commands & Settings
+
+<div align="center">
 
 | Command | Description |
 |:--------|:------------|
@@ -179,13 +185,15 @@ cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.2.2-universal/
 | `windsurfQuota.refreshIntervalSeconds` | `15` | Fallback polling interval (seconds) |
 | `windsurfQuota.stateDbPath` | auto | Path to `state.vscdb` (auto-detected if empty) |
 
+</div>
+
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Architecture
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Windsurf_IDE-state.vscdb-58a6ff?style=for-the-badge" alt="State DB">
-</p>
+<div align="center">
+
+<img src="https://img.shields.io/badge/Windsurf_IDE-state.vscdb-58a6ff?style=for-the-badge" alt="State DB">
 
 ```
 Windsurf IDE                          Extension
@@ -201,11 +209,13 @@ state.vscdb  ──── fs.watch() ────>  Real-time update
 - **Fallback**: mtime polling every 2s + interval poll every 15s
 - **Python required**: Uses Python to read SQLite (auto-detected)
 
+</div>
+
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 
 ## Contributing
 
-<p>
+<p align="center">
   <img src="https://img.shields.io/badge/1-Fork-181717?style=flat-square&logo=github"> 
   <img src="https://img.shields.io/badge/2-Branch-58a6ff?style=flat-square&logo=git"> 
   <img src="https://img.shields.io/badge/3-Commit-2ea043?style=flat-square&logo=git"> 
