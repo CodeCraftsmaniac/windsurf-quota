@@ -1,56 +1,112 @@
-<h1 align="center">
-  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/icon.png" width="56" height="56"><br>
-  Windsurf Quota
-</h1>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/icon.png" width="80" height="80">
+</p>
+
+<h1 align="center">Windsurf Quota</h1>
 
 <p align="center">
-  <b>Real-Time AI Usage Tracker</b><br>
-  <sub>Zero login. Zero config. Zero delay.</sub>
+  <img src="https://img.shields.io/badge/Real--Time-AI_Usage_Tracker-58a6ff?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEzIDJMMyAxNGg5bC0xIDggMTAtMTJoLTlsMS04eiIgZmlsbD0iIzU4YTZmZiIvPjwvc3ZnPg==&logoColor=white&labelColor=0d1117" alt="Real-Time AI Usage Tracker">
 </p>
 
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=CodeCraftsmaniac.windsurf-quota"><img src="https://img.shields.io/badge/Install_from-Marketplace-0078D4?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="Marketplace"></a>
-  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota"><img src="https://img.shields.io/badge/View_on-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
+  <b>Zero login. Zero config. Zero delay.</b><br>
+  <sub>Track your Windsurf AI quotas the moment they change</sub>
+</p>
+
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=CodeCraftsmaniac.windsurf-quota"><img src="https://img.shields.io/badge/Install-Marketplace-0078D4?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="Marketplace"></a>
+  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota"><img src="https://img.shields.io/badge/Source-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"></a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Updates-Real_Time-2ea043?style=for-the-badge&logo=lightning&logoColor=white" alt="Real-Time">
-  <img src="https://img.shields.io/badge/Zero-Login-58a6ff?style=for-the-badge" alt="Zero Login">
-  <img src="https://img.shields.io/badge/Zero-Config-a371f7?style=for-the-badge" alt="Zero Config">
-  <img src="https://img.shields.io/badge/Platform-Win%20%7C%20Mac%20%7C%20Linux-8b949e?style=for-the-badge" alt="Platform">
+  <img src="https://img.shields.io/badge/Updates-Real__Time-2ea043?style=for-the-badge&logo=lightning&logoColor=white">
+  <img src="https://img.shields.io/badge/Auth-Zero__Login-58a6ff?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Setup-Zero__Config-a371f7?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Platform-Win%20%7C%20Mac%20%7C%20Linux-8b949e?style=for-the-badge">
 </p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Daily-Quota-f85149?style=flat-square">
+  <img src="https://img.shields.io/badge/Weekly-Quota-d29922?style=flat-square">
+  <img src="https://img.shields.io/badge/Cascade-Messages-58a6ff?style=flat-square">
+  <img src="https://img.shields.io/badge/Flow-Actions-a371f7?style=flat-square">
+  <img src="https://img.shields.io/badge/Overage-Balance-2ea043?style=flat-square">
+</p>
+
+<br>
 
 ---
 
-## Status Bar Widget
+## Preview
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/widget.png" alt="Status Bar Widget">
-</p>
-
-A compact, color-coded overview lives in your status bar at all times. Shows your **Plan name**, **Daily %**, **Weekly %**, and **Overage balance** at a glance.
-
-## Hover Tooltip
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/tooltip.png" alt="Tooltip">
-</p>
-
-Hover over the status bar widget for a premium tooltip with **Unicode block progress bars**, column-aligned layout, and live reset timers.
+<table align="center">
+  <tr>
+    <td align="center"><b>Status Bar Widget</b></td>
+    <td align="center"><b>Hover Tooltip</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/widget.png" alt="Widget" width="400"></td>
+    <td align="center"><img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/tooltip.png" alt="Tooltip" width="400"></td>
+  </tr>
+</table>
 
 ---
 
 ## Features
 
-<p>
-  <img src="https://img.shields.io/badge/-Real_Time-2ea043?style=flat-square"> <b>Instant updates</b> via fs.watch() on the state DB -- fires the moment anything changes<br>
-  <img src="https://img.shields.io/badge/-Zero_Login-58a6ff?style=flat-square"> <b>No API calls</b>, no browser automation, no Selenium, no .env files<br>
-  <img src="https://img.shields.io/badge/-Zero_Config-a371f7?style=flat-square"> <b>Auto-detects</b> Windsurf's state.vscdb on Windows, macOS, and Linux<br>
-  <img src="https://img.shields.io/badge/-Color_Coded-f85149?style=flat-square"> <b>Green / Yellow / Red</b> progress bars based on remaining quota<br>
-  <img src="https://img.shields.io/badge/-Cascade-d29922?style=flat-square"> <b>Messages, Flow Actions, Flex Credits</b> tracked with mini bars<br>
-  <img src="https://img.shields.io/badge/-Overage-58a6ff?style=flat-square"> <b>Pay-per-use balance</b> shown in status bar and tooltip
-</p>
+<table>
+  <tr>
+    <td><img src="https://img.shields.io/badge/-Real__Time-2ea043?style=flat-square"></td>
+    <td><b>Instant updates</b> via fs.watch() -- fires the moment the DB changes</td>
+  </tr>
+  <tr>
+    <td><img src="https://img.shields.io/badge/-Zero__Login-58a6ff?style=flat-square"></td>
+    <td><b>No API calls</b>, no browser automation, no Selenium, no .env files</td>
+  </tr>
+  <tr>
+    <td><img src="https://img.shields.io/badge/-Zero__Config-a371f7?style=flat-square"></td>
+    <td><b>Auto-detects</b> Windsurf's state.vscdb on Windows, macOS, and Linux</td>
+  </tr>
+  <tr>
+    <td><img src="https://img.shields.io/badge/-Color__Coded-f85149?style=flat-square"></td>
+    <td><b>Green / Yellow / Red</b> progress bars based on remaining quota</td>
+  </tr>
+  <tr>
+    <td><img src="https://img.shields.io/badge/-Cascade-d29922?style=flat-square"></td>
+    <td><b>Messages, Flow Actions, Flex Credits</b> tracked with block bars</td>
+  </tr>
+  <tr>
+    <td><img src="https://img.shields.io/badge/-Overage-58a6ff?style=flat-square"></td>
+    <td><b>Pay-per-use balance</b> shown in status bar and tooltip</td>
+  </tr>
+</table>
+
+---
+
+## Quota Breakdown
+
+| Metric | Status Bar | Tooltip | Format |
+|:-------|:----------:|:-------:|:-------|
+| **Plan Name** | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | Free / Pro / Ultimate / Team |
+| **Daily Quota** | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | `[██████████░░░░░░░░░░]` + % + timer |
+| **Weekly Quota** | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | `[██████████░░░░░░░░░░]` + % + timer |
+| **Cascade Messages** | | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | used / total + bar |
+| **Flow Actions** | | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | used / total + bar |
+| **Flex Credits** | | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | used / total + bar |
+| **Overage Balance** | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | `$XX.XX used` + bar |
+| **Billing Strategy** | | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | quota / overage |
+| **Account Email** | | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | auto from DB |
+
+---
+
+## Color Coding
+
+| Range | Status | Bar Color |
+|:------|:------:|:---------:|
+| >= 50% remaining | <img src="https://img.shields.io/badge/-Safe-2ea043?style=flat-square"> | `██████████` |
+| 20-49% remaining | <img src="https://img.shields.io/badge/-Low-d29922?style=flat-square"> | `██████████` |
+| < 20% remaining | <img src="https://img.shields.io/badge/-Critical-f85149?style=flat-square"> | `██████████` |
 
 ---
 
@@ -69,7 +125,7 @@ code --install-extension CodeCraftsmaniac.windsurf-quota
 Download the [latest release](https://github.com/CodeCraftsmaniac/windsurf-quota/releases) and run:
 
 ```bash
-code --install-extension windsurf-quota-1.0.9.vsix
+code --install-extension windsurf-quota-1.1.0.vsix
 ```
 
 ### Option 3: Manual
@@ -79,24 +135,22 @@ code --install-extension windsurf-quota-1.0.9.vsix
 
 ```bash
 # Windows
-xcopy /E . "%USERPROFILE%\.windsurf\extensions\codecraftsmaniac.windsurf-quota-1.0.9-universal\"
+xcopy /E . "%USERPROFILE%\.windsurf\extensions\codecraftsmaniac.windsurf-quota-1.1.0-universal\"
 
 # macOS / Linux
-cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.9-universal/
+cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.1.0-universal/
 ```
 
 3. **Restart Windsurf IDE** -- the widget appears in the status bar!
 
 ---
 
-## Commands
+## Commands & Settings
 
 | Command | Description |
 |:--------|:------------|
 | `Windsurf Quota: Show Details` | Opens the detail panel with full breakdown |
 | `Windsurf Quota: Refresh Now` | Force-refresh quota data from DB |
-
-## Settings
 
 | Setting | Default | Description |
 |:--------|:--------|:------------|
@@ -105,35 +159,20 @@ cp -r . ~/.windsurf/extensions/codecraftsmaniac.windsurf-quota-1.0.9-universal/
 
 ---
 
-## What's Tracked
+## Architecture
 
-| Metric | Status Bar | Tooltip |
-|:-------|:----------:|:-------:|
-| **Plan Name** (Free/Pro/Ultimate/Team) | Y | Y |
-| **Daily Quota %** | Y | Y |
-| **Weekly Quota %** | Y | Y |
-| **Daily Reset Timer** | | Y |
-| **Weekly Reset Timer** | | Y |
-| **Cascade Messages** (used/total/remaining) | | Y |
-| **Flow Actions** (used/total/remaining) | | Y |
-| **Flex Credits** (used/total/remaining) | | Y |
-| **Overage Balance** ($) | Y | Y |
-| **Billing Strategy** | | Y |
-| **Account Email** | | Y |
+<p align="center">
+  <img src="https://img.shields.io/badge/Windsurf_IDE-state.vscdb-58a6ff?style=for-the-badge" alt="State DB">
+</p>
 
-## Color Coding
-
-| Range | Color | Meaning |
-|:------|:------|:--------|
-| >= 50% | <img src="https://img.shields.io/badge/-Green-2ea043?style=flat-square"> | Plenty of quota left |
-| 20-49% | <img src="https://img.shields.io/badge/-Yellow-d29922?style=flat-square"> | Quota running low |
-| < 20% | <img src="https://img.shields.io/badge/-Red-f85149?style=flat-square"> | Quota nearly exhausted |
-
----
-
-## How It Works
-
-The extension reads Windsurf's **own cached data** from the local `state.vscdb` SQLite database. The IDE already keeps this data fresh on every heartbeat -- so the widget updates the instant anything changes.
+```
+Windsurf IDE                          Extension
+-----------                          ---------
+state.vscdb  ──── fs.watch() ────>  Real-time update
+  |                                    |
+  ├── cachedPlanInfo ─────────────>  Daily/Weekly/Cascade/Overage
+  └── codeium.windsurf ───────────>  Email/Billing/Plan
+```
 
 - **Data source**: `windsurf.settings.cachedPlanInfo` + `codeium.windsurf` keys
 - **Real-time**: `fs.watch()` on the DB file -- fires instantly on change
@@ -144,19 +183,18 @@ The extension reads Windsurf's **own cached data** from the local `state.vscdb` 
 
 ## Contributing
 
-Contributions are welcome!
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing`)
-5. Open a Pull Request
+<p>
+  <img src="https://img.shields.io/badge/1-Fork-181717?style=flat-square&logo=github"> 
+  <img src="https://img.shields.io/badge/2-Branch-58a6ff?style=flat-square&logo=git"> 
+  <img src="https://img.shields.io/badge/3-Commit-2ea043?style=flat-square&logo=git"> 
+  <img src="https://img.shields.io/badge/4-Push-d29922?style=flat-square&logo=git"> 
+  <img src="https://img.shields.io/badge/5-PR-a371f7?style=flat-square&logo=github">
+</p>
 
 ---
 
 <p align="center">
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"><br>
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge"><br>
   <sub>MIT (c) <a href="https://github.com/CodeCraftsmaniac">CodeCraftsmaniac</a></sub><br><br>
-  <b>If this extension helps you, give it a star on GitHub!</b><br>
-  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota"><img src="https://img.shields.io/badge/Star_on-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="Star"></a>
+  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota"><img src="https://img.shields.io/badge/Star_on-GitHub-181717?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117" alt="Star"></a>
 </p>

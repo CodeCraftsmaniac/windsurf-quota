@@ -1,32 +1,53 @@
 # Change Log
 
+<p align="center">
+  <img src="https://img.shields.io/badge/CHANGELOG-Windsurf_Quota-58a6ff?style=for-the-badge&labelColor=0d1117">
+</p>
+
+---
+
+## [1.1.1] -- 2026-04-18
+
+<img src="https://img.shields.io/badge/-Reorganized-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Premium_Docs-58a6ff?style=flat-square"> <img src="https://img.shields.io/badge/-Banners_&_Charts-a371f7?style=flat-square">
+
+- **Reorganized project** -- scripts moved to `scripts/`, old VSIX cleaned up
+- **Premium README** -- centered icon, title banner, metric badges, preview table, architecture diagram, contributing step badges
+- **Premium CHANGELOG** -- header banner, colored version badges per entry
+- **Quota Breakdown table** with Y/N badges and format column
+- **Color Coding table** with Safe/Low/Critical status badges
+- **Architecture section** with ASCII flow diagram
+
 ## [1.1.0] -- 2026-04-18
 
-### Real Screenshots + Overage Fix + README Cleanup
-- **Real screenshots** from actual UI (widget.png, tooltip.png)
+<img src="https://img.shields.io/badge/-Real_Screenshots-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Overage_Fix-58a6ff?style=flat-square"> <img src="https://img.shields.io/badge/-README_Cleanup-d29922?style=flat-square">
+
+- **Real screenshots** from actual UI (`widget.png`, `tooltip.png`)
 - **Overage shows "used"** -- `$38.78 used` instead of just `$38.78`
 - **Removed Detail Panel** from README (not currently shown in UI)
-- **Renamed images** -- statusbar.png → widget.png, deleted detail-panel.png
+- **Renamed images** -- `statusbar.png` → `widget.png`, deleted `detail-panel.png`
 - **What's Tracked table** simplified to Status Bar + Tooltip columns only
 
 ## [1.0.9] -- 2026-04-18
 
-### Premium README + Demo Images + Pre-formatted Tooltip
+<img src="https://img.shields.io/badge/-Premium_README-58a6ff?style=flat-square"> <img src="https://img.shields.io/badge/-Demo_Images-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Pre__Formatted-a371f7?style=flat-square">
+
 - **Premium README** -- centered layout, animated badges, color feature badges, 3 demo images
-- **New demo images** -- statusbar.png, tooltip.png, detail-panel.png
+- **New demo images** -- `statusbar.png`, `tooltip.png`, `detail-panel.png`
 - **Pre-formatted tooltip** -- `<pre>` tag preserves exact monospace column alignment
 - Columns stay perfectly aligned: emoji+label | [bar] | pct | detail
 
 ## [1.0.8] -- 2026-04-18
 
-### Fixed Column Alignment in Tooltip
+<img src="https://img.shields.io/badge/-Column_Alignment-58a6ff?style=flat-square"> <img src="https://img.shields.io/badge/-HTML_Spans-d29922?style=flat-square">
+
 - **HTML `<span>` with fixed widths** -- columns stay aligned regardless of label length
 - COL1 (100px): emoji + label | COL2 (130px): [bar] | COL3 (50px): pct | COL4: detail
 - Markdown was collapsing spaces -- now uses HTML inline-block spans
 
 ## [1.0.7] -- 2026-04-18
 
-### Column-Aligned Unicode Bar Tooltip
+<img src="https://img.shields.io/badge/-Unicode_Bars-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Emojis_Restored-f85149?style=flat-square">
+
 - **Exact column layout** -- labels left, bars center, pct right, detail far right
 - **Unicode block bars** -- `██████████` filled + `░░░░░░░░░░` empty, 10 chars each
 - **Emojis restored** -- 🆓📅📆⚡💬🔄💸🟢⏳ for clear visual identity
@@ -35,7 +56,8 @@
 
 ## [1.0.6] -- 2026-04-18
 
-### Premium Tooltip Layout + SVG Fix
+<img src="https://img.shields.io/badge/-SVG_Fix-58a6ff?style=flat-square"> <img src="https://img.shields.io/badge/-Unified_Bars-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Two__Column-a371f7?style=flat-square">
+
 - **Fixed broken SVG icons** in tooltip -- switched from markdown `![]()` to HTML `<img>` tags
 - **Unified progress bar size** -- all bars same width (160px) and height (12px)
 - **Two-column layout** -- text labels left, progress bars right, aligned consistently
@@ -44,7 +66,8 @@
 
 ## [1.0.5] -- 2026-04-18
 
-### Digital SVG Icons -- Zero Emojis
+<img src="https://img.shields.io/badge/-SVG_Icons-58a6ff?style=flat-square"> <img src="https://img.shields.io/badge/-Zero_Emojis-f85149?style=flat-square">
+
 - **All emojis removed** -- replaced with crisp digital SVG icons throughout
 - Tooltip: SVG wave, sun, calendar, clock, bolt, dollar, live-dot icons
 - Webview panel: inline SVG icons for bar labels
@@ -53,43 +76,27 @@
 
 ## [1.0.4] -- 2026-04-18
 
-### Real SVG Gradient Progress Bars
-- Hover tooltip: gradient progress bars via SVG data URI images
-- Bars use 3-color gradients (green/yellow/red) with rounded corners
-- Mini bars for Cascade stats (messages, flows)
-- Click removed -- click status bar now just refreshes data
-- Detail panel only via command palette
+<img src="https://img.shields.io/badge/-Real__Time-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Plan_Name-58a6ff?style=flat-square">
+
+- **Plan name** shown in status bar (Free/Pro/Ultimate/Team)
+- **Real-time updates** via fs.watch() on state DB file
+- **Cascade details** in tooltip: messages, flow actions, flex credits
+- **Overage balance** in status bar and tooltip
+- **Billing strategy** and account email in tooltip
 
 ## [1.0.3] -- 2026-04-18
 
-### Premium UI Overhaul
-- Hover tooltip: Unicode bars for cross-platform compatibility
-- Click panel: premium overlay with blur background, slide-in animation
-- Gradient progress bars with shimmer effects
-- Cascade section with gradient border + gradient title text
+<img src="https://img.shields.io/badge/-SQLite_Read-2ea043?style=flat-square"> <img src="https://img.shields.io/badge/-Auto__Detect-d29922?style=flat-square">
+
+- **No more JSON file** -- reads directly from state.vscdb via Python
+- **Auto-detect DB path** on Windows, macOS, Linux
+- **Fallback polling** when fs.watch is not available
+- **Configurable refresh interval** via settings
 
 ## [1.0.2] -- 2026-04-18
 
-### Premium Hover Tooltip
-- Hover over the status bar to see full details
-- Colorful progress bars for daily, weekly, Cascade
-- Click status bar now just refreshes data
+<img src="https://img.shields.io/badge/-Initial_Release-58a6ff?style=flat-square">
 
-## [1.0.1] -- 2026-04-18
-
-### Marketplace Update
-- Added demo images to README (status bar + detail panel screenshots)
-- Marketplace-compatible README with GitHub-hosted images
-
-## [1.0.0] -- 2026-04-18
-
-### Initial Release
-
-- Status bar widget -- Plan name + daily % + weekly % + overage balance
-- Detail panel -- full breakdown with animated progress bars
-- Cascade tracking -- Messages, flow actions, flex credits
-- Real-time updates -- `fs.watch()` on state DB, 0ms delay
-- Zero config -- Auto-detects Windsurf's `state.vscdb` on Windows/macOS/Linux
-- Zero login -- Reads from Windsurf's own cache, no Selenium or API calls
-- Color-coded -- Green (>=50%), Yellow (>=20%), Red (<20%)
-- Animated UI -- Shimmer effects, fade-in cards, growing bars, pulsing live indicator
+- Status bar widget with daily/weekly quota
+- Tooltip with progress bars
+- Click to refresh

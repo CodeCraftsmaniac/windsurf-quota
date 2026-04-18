@@ -2,8 +2,7 @@ __pycache__/
 *.pyc
 .env
 *.db
-make_icon.py
-test_quota.py
+scripts/
 *.vsix
 node_modules/
 icon.svg
