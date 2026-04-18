@@ -46,8 +46,8 @@
 
 <p align="center">
   <a href="https://github.com/CodeCraftsmaniac/windsurf-quota/graphs/commit-activity"><img src="https://img.shields.io/github/commit-activity/t/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=58a6ff" alt="Commit Activity"></a>
-  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota/releases"><img src="https://img.shields.io/github/releases/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=2ea043" alt="Releases"></a>
-  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota/last-commit"><img src="https://img.shields.io/github/last-commit/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=a371f7" alt="Last Commit"></a>
+  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota/releases"><img src="https://img.shields.io/github/v/release/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=2ea043" alt="Releases"></a>
+  <a href="https://github.com/CodeCraftsmaniac/windsurf-quota"><img src="https://img.shields.io/github/last-commit/CodeCraftsmaniac/windsurf-quota?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=a371f7" alt="Last Commit"></a>
 </p>
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
