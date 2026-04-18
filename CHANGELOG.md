@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.8] -- 2026-04-18
+
+### Fixed Column Alignment in Tooltip
+- **HTML `<span>` with fixed widths** -- columns stay aligned regardless of label length
+- COL1 (100px): emoji + label | COL2 (130px): [bar] | COL3 (50px): pct | COL4: detail
+- Markdown was collapsing spaces -- now uses HTML inline-block spans
+
 ## [1.0.7] -- 2026-04-18
 
 ### Column-Aligned Unicode Bar Tooltip

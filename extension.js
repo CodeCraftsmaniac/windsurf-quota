@@ -112,7 +112,7 @@ function formatResetTimeFull(date) {
     return date.toLocaleString();
 }
 
-// ─── Tooltip Builder (Unicode block bars, column-aligned) ──────────────────────
+// ─── Tooltip Builder (Unicode block bars, HTML column-aligned) ─────────────────
 
 function bar(pct, len = 10) {
     const filled = Math.max(Math.round(pct * len / 100), 0);
@@ -120,54 +120,55 @@ function bar(pct, len = 10) {
     return '\u2588'.repeat(filled) + '\u2591'.repeat(empty);
 }
 
-function padR(s, n) { return s + ' '.repeat(Math.max(n - s.length, 0)); }
-function padL(s, n) { return ' '.repeat(Math.max(n - s.length, 0)) + s; }
-
 function buildTooltip(q) {
     const md = new vscode.MarkdownString();
     md.isTrusted = true;
     md.supportHtml = true;
 
-    const sep = '\u2500'.repeat(40);
     const msgPct = q.totalMessages > 0 ? Math.round((q.remainingMessages / q.totalMessages) * 100) : 0;
     const flowPct = q.totalFlowActions > 0 ? Math.round((q.remainingFlowActions / q.totalFlowActions) * 100) : 0;
 
-    let lines = [];
+    const COL1 = 'min-width:100px;display:inline-block';  // emoji + label
+    const COL2 = 'min-width:130px;display:inline-block';   // [bar]
+    const COL3 = 'min-width:50px;display:inline-block;text-align:right';  // pct
+    const COL4 = 'color:#8b949e;font-size:11px';           // detail
+    const ROW = 'margin:3px 0;line-height:1.6';
+    const SEP = `<hr style="border:none;border-top:1px solid #30363d;margin:6px 0">`;
+
+    let html = '';
 
     // Header
-    lines.push(`\uD83C\uDD93 **${q.planName} Plan** \u2014 \uD83D\uDFE2 Live Stats`);
-    lines.push(`\uD83D\uDC7E Email: ${q.email}`);
-    lines.push(sep);
-    lines.push('');
+    html += `<div style="margin-bottom:4px">\uD83C\uDD93 <b>${q.planName} Plan</b> \u2014 \uD83D\uDFE2 Live Stats</div>`;
+    html += `<div style="color:#8b949e;font-size:11px">\uD83D\uDC7E ${q.email}</div>`;
+    html += SEP;
 
     // Quota rows
     if (!q.hideDaily && q.dailyRemaining !== null) {
-        lines.push(`\uD83D\uDCC5 ${padR('Daily', 12)} [${bar(q.dailyRemaining)}]  ${padL(q.dailyRemaining + '%', 4)}   \u23F3 ${formatResetTime(q.dailyResetAt)}`);
+        html += `<div style="${ROW}"><span style="${COL1}">\uD83D\uDCC5 Daily</span><span style="${COL2}">[${bar(q.dailyRemaining)}]</span><span style="${COL3}"><b>${q.dailyRemaining}%</b></span><span style="${COL4}">\u23F3 ${formatResetTime(q.dailyResetAt)}</span></div>`;
     }
     if (!q.hideWeekly && q.weeklyRemaining !== null) {
-        lines.push(`\uD83D\uDCC6 ${padR('Weekly', 12)} [${bar(q.weeklyRemaining)}]  ${padL(q.weeklyRemaining + '%', 4)}   \u23F3 ${formatResetTime(q.weeklyResetAt)}`);
+        html += `<div style="${ROW}"><span style="${COL1}">\uD83D\uDCC6 Weekly</span><span style="${COL2}">[${bar(q.weeklyRemaining)}]</span><span style="${COL3}"><b>${q.weeklyRemaining}%</b></span><span style="${COL4}">\u23F3 ${formatResetTime(q.weeklyResetAt)}</span></div>`;
     }
 
-    lines.push('');
-    lines.push(sep);
+    html += SEP;
 
     // Cascade
-    lines.push(`\u26A1 **CASCADE**`);
-    lines.push(`\uD83D\uDCAC ${padR('Messages', 12)} [${bar(msgPct)}]  ${padL(msgPct + '%', 4)}    ${q.remainingMessages} / ${q.totalMessages}`);
-    lines.push(`\uD83D\uDD04 ${padR('Flows', 12)} [${bar(flowPct)}]  ${padL(flowPct + '%', 4)}    ${q.remainingFlowActions} / ${q.totalFlowActions}`);
+    html += `<div style="margin:4px 0">\u26A1 <b style="color:#58a6ff">CASCADE</b></div>`;
+    html += `<div style="${ROW}"><span style="${COL1}">\uD83D\uDCAC Messages</span><span style="${COL2}">[${bar(msgPct)}]</span><span style="${COL3}"><b>${msgPct}%</b></span><span style="${COL4}">${q.remainingMessages} / ${q.totalMessages}</span></div>`;
+    html += `<div style="${ROW}"><span style="${COL1}">\uD83D\uDD04 Flows</span><span style="${COL2}">[${bar(flowPct)}]</span><span style="${COL3}"><b>${flowPct}%</b></span><span style="${COL4}">${q.remainingFlowActions} / ${q.totalFlowActions}</span></div>`;
     if (q.totalFlexCredits > 0) {
-        lines.push(`\uD83D\uDD39 ${padR('Flex', 12)} [${bar(100)}]           ${q.remainingFlexCredits} / ${q.totalFlexCredits}`);
+        html += `<div style="${ROW}"><span style="${COL1}">\uD83D\uDD39 Flex</span><span style="${COL2}">[${bar(100)}]</span><span style="${COL3}"></span><span style="${COL4}">${q.remainingFlexCredits} / ${q.totalFlexCredits}</span></div>`;
     }
 
-    lines.push(sep);
+    html += SEP;
 
     // Overage
     if (parseFloat(q.overageBalanceDollars) > 0) {
         const ovPct = Math.min(Math.round(parseFloat(q.overageBalanceDollars) * 2), 100);
-        lines.push(`\uD83D\uDCB8 ${padR('Overage', 12)} [${bar(ovPct)}]        $${q.overageBalanceDollars}`);
+        html += `<div style="${ROW}"><span style="${COL1}">\uD83D\uDCB8 Overage</span><span style="${COL2}">[${bar(ovPct)}]</span><span style="${COL3}"></span><span style="${COL4}">$${q.overageBalanceDollars}</span></div>`;
     }
 
-    md.appendMarkdown(lines.join('\n\n'));
+    md.appendMarkdown(html);
     return md;
 }
 
