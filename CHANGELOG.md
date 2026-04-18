@@ -2,10 +2,11 @@
 
 ## [1.0.9] -- 2026-04-18
 
-### Pre-formatted Tooltip -- Exact Column Alignment
-- Uses `<pre>` tag to preserve exact monospace spacing
+### Premium README + Demo Images + Pre-formatted Tooltip
+- **Premium README** -- centered layout, animated badges, color feature badges, 3 demo images
+- **New demo images** -- statusbar.png, tooltip.png, detail-panel.png
+- **Pre-formatted tooltip** -- `<pre>` tag preserves exact monospace column alignment
 - Columns stay perfectly aligned: emoji+label | [bar] | pct | detail
-- No more merged/collapsed text
 
 ## [1.0.8] -- 2026-04-18
 

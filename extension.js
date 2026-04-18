@@ -479,7 +479,7 @@ function updateDetailPanel() {
     <span>Billing: ${q.billingStrategy}</span>
   </div>
 
-  <div class="footer-text">Windsurf Quota v1.0.5</div>
+  <div class="footer-text">Windsurf Quota v1.0.9</div>
 
 </div>
 </div>
