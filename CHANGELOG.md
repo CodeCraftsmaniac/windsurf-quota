@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.0.2] — 2026-04-18
+
+### 🎯 Premium Hover Tooltip
+- **No more click-to-open** — hover over the status bar to see full details
+- Premium HTML tooltip with colorful progress bars for daily, weekly, Cascade
+- Click status bar now just refreshes data
+- Detail panel still available via command palette
+
 ## [1.0.1] — 2026-04-18
 
 ### 📝 Marketplace Update

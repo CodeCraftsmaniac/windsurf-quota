@@ -98,13 +98,6 @@ function formatQuotaData(data) {
     };
 }
 
-function getQuotaIcon(pct) {
-    if (pct === null) return '$(question)';
-    if (pct >= 50) return '$(check)';
-    if (pct >= 20) return '$(warning)';
-    return '$(error)';
-}
-
 function formatResetTime(date) {
     if (!date) return '?';
     const diffMs = date - new Date();
@@ -119,7 +112,83 @@ function formatResetTimeFull(date) {
     return date.toLocaleString();
 }
 
-// ─── Status Bar: Overview Only ────────────────────────────────────────────────
+// ─── Premium Tooltip Builder ──────────────────────────────────────────────────
+
+function buildTooltip(q) {
+    const md = new vscode.MarkdownString();
+    md.isTrusted = true;
+    md.supportHtml = true;
+
+    const barColor = (pct) => pct >= 50 ? '#2ea043' : pct >= 20 ? '#d29922' : '#f85149';
+    const barBg = '#30363d';
+    const makeHtmlBar = (pct, width = 180) => {
+        const fillW = Math.max(Math.round(pct * width / 100), 4);
+        const c = barColor(pct);
+        return `<span style="display:inline-block;width:${width}px;height:10px;background:${barBg};border-radius:5px;vertical-align:middle;overflow:hidden"><span style="display:inline-block;width:${fillW}px;height:10px;background:${c};border-radius:5px"></span></span> <b>${pct}%</b>`;
+    };
+
+    let html = '';
+
+    // Header
+    html += `<div style="margin-bottom:8px">`;
+    html += `<b style="font-size:14px">🌊 ${q.planName} Plan</b>`;
+    html += ` <span style="color:#8b949e;font-size:11px">${q.email}</span>`;
+    html += `</div>`;
+
+    // Daily bar
+    if (!q.hideDaily && q.dailyRemaining !== null) {
+        html += `<div style="margin-bottom:6px">`;
+        html += `<span style="color:#8b949e;font-size:11px">☀ Daily</span><br>`;
+        html += makeHtmlBar(q.dailyRemaining);
+        html += ` <span style="color:#8b949e;font-size:10px">⏱ ${formatResetTime(q.dailyResetAt)}</span>`;
+        html += `</div>`;
+    }
+
+    // Weekly bar
+    if (!q.hideWeekly && q.weeklyRemaining !== null) {
+        html += `<div style="margin-bottom:6px">`;
+        html += `<span style="color:#8b949e;font-size:11px">📅 Weekly</span><br>`;
+        html += makeHtmlBar(q.weeklyRemaining);
+        html += ` <span style="color:#8b949e;font-size:10px">⏱ ${formatResetTime(q.weeklyResetAt)}</span>`;
+        html += `</div>`;
+    }
+
+    // Cascade section
+    const msgPct = q.totalMessages > 0 ? Math.round((q.remainingMessages / q.totalMessages) * 100) : 0;
+    const flowPct = q.totalFlowActions > 0 ? Math.round((q.remainingFlowActions / q.totalFlowActions) * 100) : 0;
+
+    html += `<hr style="border:none;border-top:1px solid #30363d;margin:8px 0">`;
+    html += `<div style="border-left:2px solid #58a6ff;padding-left:8px">`;
+    html += `<b style="color:#58a6ff;font-size:11px">⚡ CASCADE</b><br>`;
+
+    html += `<span style="color:#8b949e;font-size:11px">Messages</span> `;
+    html += makeHtmlBar(msgPct, 120);
+    html += ` <span style="font-size:10px">${q.remainingMessages}/${q.totalMessages}</span><br>`;
+
+    html += `<span style="color:#8b949e;font-size:11px">Flows</span> `;
+    html += makeHtmlBar(flowPct, 120);
+    html += ` <span style="font-size:10px">${q.remainingFlowActions}/${q.totalFlowActions}</span>`;
+
+    if (q.totalFlexCredits > 0) {
+        html += `<br><span style="color:#8b949e;font-size:11px">Flex</span> <b>${q.remainingFlexCredits}</b>/<span style="font-size:10px">${q.totalFlexCredits}</span>`;
+    }
+
+    html += `</div>`;
+
+    // Overage
+    if (parseFloat(q.overageBalanceDollars) > 0) {
+        html += `<div style="margin-top:6px"><span style="color:#58a6ff;font-size:12px">💰 $${q.overageBalanceDollars}</span> <span style="color:#8b949e;font-size:10px">overage</span></div>`;
+    }
+
+    // Footer
+    html += `<hr style="border:none;border-top:1px solid #30363d;margin:8px 0">`;
+    html += `<span style="color:#8b949e;font-size:10px">🟢 Live · Billing: ${q.billingStrategy}</span>`;
+
+    md.appendMarkdown(html);
+    return md;
+}
+
+// ─── Status Bar Update ────────────────────────────────────────────────────────
 
 async function updateStatusBar() {
     if (_updatePending) return;
@@ -144,7 +213,7 @@ async function updateStatusBar() {
 
         lastQuotaData = q;
 
-        // Compact overview: Plan D:% W:% $
+        // Compact status bar text
         let parts = [];
         if (!q.hideDaily && q.dailyRemaining !== null) {
             parts.push(`D:${q.dailyRemaining}%`);
@@ -158,27 +227,8 @@ async function updateStatusBar() {
 
         statusBarItem.text = `$(waves) ${q.planName} │ ${parts.join(' · ')}`;
 
-        // Hover tooltip — quick summary
-        const lines = [
-            `**${q.planName} Plan** — ${q.email}`,
-            '',
-        ];
-        if (!q.hideDaily && q.dailyRemaining !== null) {
-            lines.push(`☀ Daily: **${q.dailyRemaining}%** left (resets ${formatResetTime(q.dailyResetAt)})`);
-        }
-        if (!q.hideWeekly && q.weeklyRemaining !== null) {
-            lines.push(`📅 Weekly: **${q.weeklyRemaining}%** left (resets ${formatResetTime(q.weeklyResetAt)})`);
-        }
-        if (parseFloat(q.overageBalanceDollars) > 0) {
-            lines.push(`💰 Overage: **$${q.overageBalanceDollars}**`);
-        }
-        lines.push('');
-        lines.push('---');
-        lines.push(`⚡ Cascade: **${q.remainingMessages}** msgs, **${q.remainingFlowActions}** flows left`);
-        lines.push('');
-        lines.push('*Click for full details →*');
-
-        statusBarItem.tooltip = new vscode.MarkdownString(lines.join('\n\n'));
+        // Premium hover tooltip with colorful bars
+        statusBarItem.tooltip = buildTooltip(q);
         statusBarItem.show();
 
         // Live-update detail panel if open
@@ -194,7 +244,7 @@ async function updateStatusBar() {
     }
 }
 
-// ─── Detail Panel: Full Info on Click ─────────────────────────────────────────
+// ─── Detail Panel (command palette only) ──────────────────────────────────────
 
 function showDetailsPanel() {
     if (detailPanel) {
@@ -260,7 +310,6 @@ function updateDetailPanel() {
   .card:nth-child(5) { animation-delay: 0.2s; }
   h2 { margin-top: 0; font-size: 15px; font-weight: 600; }
 
-  /* Plan badge */
   .plan-badge {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 6px 16px; border-radius: 20px;
@@ -273,7 +322,6 @@ function updateDetailPanel() {
   .plan-team { background: linear-gradient(135deg, #d2992233, #e3b34122); color: #e3b341; border: 1px solid #e3b34144; }
   .email { font-size: 13px; color: var(--vscode-descriptionForeground); margin-left: 14px; }
 
-  /* Progress bars */
   .bar-wrap { margin-top: 8px; }
   .bar-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
   .bar-label-title { font-size: 14px; font-weight: 600; }
@@ -297,7 +345,6 @@ function updateDetailPanel() {
   .bar-reset { font-size: 11px; color: var(--vscode-descriptionForeground); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
   .bar-reset .clock { animation: pulse 2s infinite; }
 
-  /* Cascade section */
   .cascade-section { border-left: 3px solid #58a6ff; padding-left: 16px; }
   .cascade-title { font-size: 14px; font-weight: 700; color: #58a6ff; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -317,7 +364,6 @@ function updateDetailPanel() {
   .stat-value.gold { color: #e3b341; }
   .stat-value.red { color: #ff7b72; }
 
-  /* Mini progress inside stat items */
   .mini-bar { height: 4px; border-radius: 2px; background: #ffffff0a; margin-top: 8px; overflow: hidden; }
   .mini-fill { height: 100%; border-radius: 2px; animation: barGrow 0.6s ease both; }
   .mini-green { background: #2ea043; }
@@ -325,7 +371,6 @@ function updateDetailPanel() {
   .mini-red { background: #f85149; }
   .mini-blue { background: #58a6ff; }
 
-  /* Footer */
   .footer { text-align: center; font-size: 11px; color: var(--vscode-descriptionForeground); margin-top: 20px; opacity: 0.6; }
   .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #2ea043; animation: pulse 1.5s infinite; margin-right: 4px; vertical-align: middle; }
 </style>
@@ -379,7 +424,7 @@ ${weeklyBar}
   </div>
 </div>
 
-<div class="footer">Windsurf Quota Widget v1.0 · Click status bar to refresh</div>
+<div class="footer">Windsurf Quota Widget v1.0</div>
 
 </body>
 </html>`;
@@ -435,14 +480,15 @@ function startDbWatcher(context) {
 // ─── Activation ───────────────────────────────────────────────────────────────
 
 function activate(context) {
-    // Status bar: click opens detail panel
+    // Status bar — NO click action, hover shows premium tooltip
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-    statusBarItem.command = 'windsurfQuota.showDetails';
     statusBarItem.text = '$(sync~spin) Windsurf...';
     statusBarItem.show();
     context.subscriptions.push(statusBarItem);
 
-    // Refresh command
+    // Refresh command (click does refresh only)
+    statusBarItem.command = 'windsurfQuota.refresh';
+
     context.subscriptions.push(
         vscode.commands.registerCommand('windsurfQuota.refresh', async () => {
             statusBarItem.text = '$(sync~spin) Syncing...';
@@ -451,7 +497,7 @@ function activate(context) {
         })
     );
 
-    // Click status bar → show details
+    // Detail panel only via command palette
     context.subscriptions.push(
         vscode.commands.registerCommand('windsurfQuota.showDetails', async () => {
             await updateStatusBar();
