@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/icon.svg" width="120" height="120">
+  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/icon.png" width="120" height="120">
 </p>
 
 <h1 align="center">Windsurf Quota</h1>
