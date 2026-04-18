@@ -112,20 +112,41 @@ function formatResetTimeFull(date) {
     return date.toLocaleString();
 }
 
-// ─── Premium Tooltip Builder (Unicode bars — works in all VS Code tooltips) ──────
+// ─── Premium Tooltip Builder (SVG gradient bars via data URI) ───────────────────
+
+function svgBar(pct, w = 200, h = 14) {
+    const fillW = Math.max(Math.round(pct * w / 100), 4);
+    const colors = pct >= 50
+        ? ['#238636', '#2ea043', '#3fb950']
+        : pct >= 20
+            ? ['#9e6a03', '#d29922', '#e3b341']
+            : ['#da3633', '#f85149', '#ff7b72'];
+    const svg = `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">`
+        + `<defs><linearGradient id="b" x1="0%" y1="0%" x2="100%" y2="0%">`
+        + `<stop offset="0%" stop-color="${colors[0]}"/>`
+        + `<stop offset="50%" stop-color="${colors[1]}"/>`
+        + `<stop offset="100%" stop-color="${colors[2]}"/>`
+        + `</linearGradient></defs>`
+        + `<rect width="${w}" height="${h}" rx="${h/2}" fill="#30363d"/>`
+        + `<rect width="${fillW}" height="${h}" rx="${h/2}" fill="url(#b)"/>`
+        + `</svg>`;
+    return `![${pct}%](data:image/svg+xml,${encodeURIComponent(svg)})`;
+}
+
+function svgMiniBar(pct, w = 100, h = 6) {
+    const fillW = Math.max(Math.round(pct * w / 100), 2);
+    const c = pct >= 50 ? '#2ea043' : pct >= 20 ? '#d29922' : '#f85149';
+    const svg = `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">`
+        + `<rect width="${w}" height="${h}" rx="${h/2}" fill="#30363d"/>`
+        + `<rect width="${fillW}" height="${h}" rx="${h/2}" fill="${c}"/>`
+        + `</svg>`;
+    return `![${pct}%](data:image/svg+xml,${encodeURIComponent(svg)})`;
+}
 
 function buildTooltip(q) {
     const md = new vscode.MarkdownString();
     md.isTrusted = true;
     md.supportHtml = true;
-
-    const uniBar = (pct, len = 20) => {
-        const filled = Math.max(Math.round(pct * len / 100), 1);
-        const empty = len - filled;
-        const color = pct >= 50 ? '🟩' : pct >= 20 ? '🟨' : '🟥';
-        const dim = '⬜';
-        return color.repeat(filled) + dim.repeat(empty);
-    };
 
     let lines = [];
 
@@ -133,14 +154,14 @@ function buildTooltip(q) {
     lines.push('');
 
     if (!q.hideDaily && q.dailyRemaining !== null) {
-        lines.push(`☀ **Daily**  ${uniBar(q.dailyRemaining)}  **${q.dailyRemaining}%**`);
-        lines.push(`　 ⏱ Resets in ${formatResetTime(q.dailyResetAt)}`);
+        lines.push(`☀ **Daily**   ${svgBar(q.dailyRemaining)}   **${q.dailyRemaining}%**`);
+        lines.push(`⏱ Resets in ${formatResetTime(q.dailyResetAt)}`);
         lines.push('');
     }
 
     if (!q.hideWeekly && q.weeklyRemaining !== null) {
-        lines.push(`📅 **Weekly**  ${uniBar(q.weeklyRemaining)}  **${q.weeklyRemaining}%**`);
-        lines.push(`　 ⏱ Resets in ${formatResetTime(q.weeklyResetAt)}`);
+        lines.push(`📅 **Weekly**  ${svgBar(q.weeklyRemaining)}  **${q.weeklyRemaining}%**`);
+        lines.push(`⏱ Resets in ${formatResetTime(q.weeklyResetAt)}`);
         lines.push('');
     }
 
@@ -149,10 +170,10 @@ function buildTooltip(q) {
 
     lines.push('---');
     lines.push(`⚡ **CASCADE**`);
-    lines.push(`　 Messages  ${uniBar(msgPct, 12)}  **${q.remainingMessages}** / ${q.totalMessages}`);
-    lines.push(`　 Flows　  ${uniBar(flowPct, 12)}  **${q.remainingFlowActions}** / ${q.totalFlowActions}`);
+    lines.push(`Messages  ${svgMiniBar(msgPct)}  **${q.remainingMessages}** / ${q.totalMessages}`);
+    lines.push(`Flows　　 ${svgMiniBar(flowPct)}  **${q.remainingFlowActions}** / ${q.totalFlowActions}`);
     if (q.totalFlexCredits > 0) {
-        lines.push(`　 Flex　　**${q.remainingFlexCredits}** / ${q.totalFlexCredits}`);
+        lines.push(`Flex　　　**${q.remainingFlexCredits}** / ${q.totalFlexCredits}`);
     }
 
     if (parseFloat(q.overageBalanceDollars) > 0) {
@@ -532,14 +553,14 @@ function startDbWatcher(context) {
 // ─── Activation ───────────────────────────────────────────────────────────────
 
 function activate(context) {
-    // Status bar — hover shows Unicode bar tooltip, click opens premium panel
+    // Status bar — hover shows SVG gradient bar tooltip, click refreshes
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
     statusBarItem.text = '$(sync~spin) Windsurf...';
-    statusBarItem.command = 'windsurfQuota.showDetails';
+    statusBarItem.command = 'windsurfQuota.refresh';
     statusBarItem.show();
     context.subscriptions.push(statusBarItem);
 
-    // Refresh command
+    // Click = refresh only
     context.subscriptions.push(
         vscode.commands.registerCommand('windsurfQuota.refresh', async () => {
             statusBarItem.text = '$(sync~spin) Syncing...';
@@ -548,7 +569,7 @@ function activate(context) {
         })
     );
 
-    // Click status bar → premium detail panel
+    // Detail panel via command palette only
     context.subscriptions.push(
         vscode.commands.registerCommand('windsurfQuota.showDetails', async () => {
             await updateStatusBar();

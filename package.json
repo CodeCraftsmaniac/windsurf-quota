@@ -2,7 +2,7 @@
   "name": "windsurf-quota",
   "displayName": "🌊 Windsurf Quota — Real-Time AI Usage Tracker",
   "description": "Track Windsurf AI quotas in real-time — daily, weekly, Cascade messages, flow actions, and overage balance. Zero login. Zero config. Click for full details.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "publisher": "CodeCraftsmaniac",
   "license": "MIT",
   "homepage": "https://github.com/CodeCraftsmaniac/windsurf-quota#readme",

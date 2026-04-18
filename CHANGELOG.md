@@ -1,5 +1,14 @@
 # Change Log
 
+## [1.0.4] — 2026-04-18
+
+### 🎨 Real SVG Gradient Progress Bars
+- **Hover tooltip**: Real gradient progress bars via SVG data URI images — no more emoji bars
+- Bars use 3-color gradients (green/yellow/red) with rounded corners
+- Mini bars for Cascade stats (messages, flows)
+- **Click removed** — click status bar now just refreshes data
+- Detail panel only via command palette
+
 ## [1.0.3] — 2026-04-18
 
 ### 🎨 Premium UI Overhaul
