@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/icon.png" width="80" height="80">
+  <img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/icon.png" width="80" height="80">
 </p>
 
 <h1 align="center">Windsurf Quota</h1>
@@ -88,15 +88,15 @@
 
 | Metric | Status Bar | Tooltip | Format |
 |:-------|:----------:|:-------:|:-------|
-| **Plan Name** | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | Free / Pro / Ultimate / Team |
-| **Daily Quota** | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | `[██████████░░░░░░░░░░]` + % + timer |
-| **Weekly Quota** | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | `[██████████░░░░░░░░░░]` + % + timer |
-| **Cascade Messages** | | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | used / total + bar |
-| **Flow Actions** | | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | used / total + bar |
-| **Flex Credits** | | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | used / total + bar |
-| **Overage Balance** | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | `$XX.XX used` + bar |
-| **Billing Strategy** | | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | quota / overage |
-| **Account Email** | | <img src="https://img.shields.io/badge/-Y-2ea043?style=flat-square"> | auto from DB |
+| **Plan Name** | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | Free / Pro / Ultimate / Team |
+| **Daily Quota** | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | `[██████████░░░░░░░░░░]` + % + timer |
+| **Weekly Quota** | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | `[██████████░░░░░░░░░░]` + % + timer |
+| **Cascade Messages** | | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | used / total + bar |
+| **Flow Actions** | | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | used / total + bar |
+| **Flex Credits** | | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | used / total + bar |
+| **Overage Balance** | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | `$XX.XX remaining` + bar |
+| **Billing Strategy** | | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | quota / overage |
+| **Account Email** | | <img src="https://img.shields.io/badge/-YES-2ea043?style=flat-square"> | auto from DB |
 
 ---
 
@@ -104,9 +104,9 @@
 
 | Range | Status | Bar Color |
 |:------|:------:|:---------:|
-| >= 50% remaining | <img src="https://img.shields.io/badge/-Safe-2ea043?style=flat-square"> | `██████████` |
-| 20-49% remaining | <img src="https://img.shields.io/badge/-Low-d29922?style=flat-square"> | `██████████` |
-| < 20% remaining | <img src="https://img.shields.io/badge/-Critical-f85149?style=flat-square"> | `██████████` |
+| >= 50% remaining | <img src="https://img.shields.io/badge/Safe-2ea043?style=flat-square"> | `██████████` |
+| 20-49% remaining | <img src="https://img.shields.io/badge/Low-d29922?style=flat-square"> | `██████████` |
+| < 20% remaining | <img src="https://img.shields.io/badge/Critical-f85149?style=flat-square"> | `██████████` |
 
 ---
 
