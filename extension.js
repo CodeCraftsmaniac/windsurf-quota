@@ -112,88 +112,62 @@ function formatResetTimeFull(date) {
     return date.toLocaleString();
 }
 
-// ─── SVG Icon Helpers (digital SVG everywhere) ─────────────────────────────────
+// ─── Tooltip Builder (Unicode block bars, column-aligned) ──────────────────────
 
-const SVG_ICONS = {
-    wave: (s=14) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round"><path d="M2 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/></svg>`,
-    sun: (s=12) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#e3b341" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-8-10H2m20 0h-2m-1.5-6.5L17 5m0 14l1.5-1.5M6 5L4.5 6.5M6 19L4.5 17.5"/></svg>`,
-    cal: (s=12) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#bc8cff" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4m-5 4h18"/></svg>`,
-    clock: (s=10) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
-    bolt: (s=12) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="#58a6ff" stroke="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
-    dollar: (s=12) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>`,
-    live: (s=8) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#2ea043"/><circle cx="12" cy="12" r="4" fill="#3fb950"/></svg>`,
-};
-
-function imgIcon(name, size) {
-    const svg = SVG_ICONS[name](size);
-    return `<img src="data:image/svg+xml,${encodeURIComponent(svg)}" width="${size}" height="${size}" style="vertical-align:middle">`;
+function bar(pct, len = 10) {
+    const filled = Math.max(Math.round(pct * len / 100), 0);
+    const empty = len - filled;
+    return '\u2588'.repeat(filled) + '\u2591'.repeat(empty);
 }
 
-function imgBar(pct, w = 160, h = 12) {
-    const fillW = Math.max(Math.round(pct * w / 100), 4);
-    const colors = pct >= 50
-        ? ['#238636', '#2ea043', '#3fb950']
-        : pct >= 20
-            ? ['#9e6a03', '#d29922', '#e3b341']
-            : ['#da3633', '#f85149', '#ff7b72'];
-    const svg = `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">`
-        + `<defs><linearGradient id="b" x1="0%" y1="0%" x2="100%" y2="0%">`
-        + `<stop offset="0%" stop-color="${colors[0]}"/>`
-        + `<stop offset="50%" stop-color="${colors[1]}"/>`
-        + `<stop offset="100%" stop-color="${colors[2]}"/>`
-        + `</linearGradient></defs>`
-        + `<rect width="${w}" height="${h}" rx="${h/2}" fill="#30363d"/>`
-        + `<rect width="${fillW}" height="${h}" rx="${h/2}" fill="url(#b)"/>`
-        + `</svg>`;
-    return `<img src="data:image/svg+xml,${encodeURIComponent(svg)}" width="${w}" height="${h}" style="vertical-align:middle">`;
-}
+function padR(s, n) { return s + ' '.repeat(Math.max(n - s.length, 0)); }
+function padL(s, n) { return ' '.repeat(Math.max(n - s.length, 0)) + s; }
 
 function buildTooltip(q) {
     const md = new vscode.MarkdownString();
     md.isTrusted = true;
     md.supportHtml = true;
 
-    const BAR_W = 160, BAR_H = 12;
-    const row = (icon, label, pct, detail) => {
-        const bar = imgBar(pct, BAR_W, BAR_H);
-        return `<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span style="min-width:90px;display:flex;align-items:center;gap:4px">${icon} <b>${label}</b></span>${bar}<span style="min-width:40px;text-align:right"><b>${pct}%</b></span><span style="color:#8b949e;font-size:11px;margin-left:4px">${detail}</span></div>`;
-    };
-
+    const sep = '\u2500'.repeat(40);
     const msgPct = q.totalMessages > 0 ? Math.round((q.remainingMessages / q.totalMessages) * 100) : 0;
     const flowPct = q.totalFlowActions > 0 ? Math.round((q.remainingFlowActions / q.totalFlowActions) * 100) : 0;
 
-    let html = '';
+    let lines = [];
 
     // Header
-    html += `<div style="margin-bottom:8px;display:flex;align-items:center;gap:6px">${imgIcon('wave',16)} <b style="font-size:14px">${q.planName} Plan</b> <span style="color:#8b949e;font-size:11px">${q.email}</span></div>`;
+    lines.push(`\uD83C\uDD93 **${q.planName} Plan** \u2014 \uD83D\uDFE2 Live Stats`);
+    lines.push(`\uD83D\uDC7E Email: ${q.email}`);
+    lines.push(sep);
+    lines.push('');
 
-    // Quota rows -- same bar size, two-column layout
+    // Quota rows
     if (!q.hideDaily && q.dailyRemaining !== null) {
-        html += row(imgIcon('sun',12), 'Daily', q.dailyRemaining, `${imgIcon('clock',10)} ${formatResetTime(q.dailyResetAt)}`);
+        lines.push(`\uD83D\uDCC5 ${padR('Daily', 12)} [${bar(q.dailyRemaining)}]  ${padL(q.dailyRemaining + '%', 4)}   \u23F3 ${formatResetTime(q.dailyResetAt)}`);
     }
     if (!q.hideWeekly && q.weeklyRemaining !== null) {
-        html += row(imgIcon('cal',12), 'Weekly', q.weeklyRemaining, `${imgIcon('clock',10)} ${formatResetTime(q.weeklyResetAt)}`);
+        lines.push(`\uD83D\uDCC6 ${padR('Weekly', 12)} [${bar(q.weeklyRemaining)}]  ${padL(q.weeklyRemaining + '%', 4)}   \u23F3 ${formatResetTime(q.weeklyResetAt)}`);
     }
 
-    // Cascade section
-    html += `<hr style="border:none;border-top:1px solid #30363d;margin:8px 0">`;
-    html += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">${imgIcon('bolt',12)} <b style="color:#58a6ff">CASCADE</b></div>`;
-    html += row('', 'Messages', msgPct, `${q.remainingMessages} / ${q.totalMessages}`);
-    html += row('', 'Flows', flowPct, `${q.remainingFlowActions} / ${q.totalFlowActions}`);
+    lines.push('');
+    lines.push(sep);
+
+    // Cascade
+    lines.push(`\u26A1 **CASCADE**`);
+    lines.push(`\uD83D\uDCAC ${padR('Messages', 12)} [${bar(msgPct)}]  ${padL(msgPct + '%', 4)}    ${q.remainingMessages} / ${q.totalMessages}`);
+    lines.push(`\uD83D\uDD04 ${padR('Flows', 12)} [${bar(flowPct)}]  ${padL(flowPct + '%', 4)}    ${q.remainingFlowActions} / ${q.totalFlowActions}`);
     if (q.totalFlexCredits > 0) {
-        html += `<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span style="min-width:90px"><b>Flex</b></span>${imgBar(100, BAR_W, BAR_H)}<span style="min-width:40px;text-align:right"><b>${q.remainingFlexCredits}</b></span><span style="color:#8b949e;font-size:11px;margin-left:4px">/ ${q.totalFlexCredits}</span></div>`;
+        lines.push(`\uD83D\uDD39 ${padR('Flex', 12)} [${bar(100)}]           ${q.remainingFlexCredits} / ${q.totalFlexCredits}`);
     }
+
+    lines.push(sep);
 
     // Overage
     if (parseFloat(q.overageBalanceDollars) > 0) {
-        html += `<div style="margin-top:6px">${imgIcon('dollar',12)} <b>$${q.overageBalanceDollars}</b> <span style="color:#8b949e;font-size:11px">overage</span></div>`;
+        const ovPct = Math.min(Math.round(parseFloat(q.overageBalanceDollars) * 2), 100);
+        lines.push(`\uD83D\uDCB8 ${padR('Overage', 12)} [${bar(ovPct)}]        $${q.overageBalanceDollars}`);
     }
 
-    // Footer
-    html += `<hr style="border:none;border-top:1px solid #30363d;margin:8px 0">`;
-    html += `<span style="display:flex;align-items:center;gap:4px;color:#8b949e;font-size:11px">${imgIcon('live',8)} Live -- Billing: ${q.billingStrategy}</span>`;
-
-    md.appendMarkdown(html);
+    md.appendMarkdown(lines.join('\n\n'));
     return md;
 }
 

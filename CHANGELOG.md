@@ -1,5 +1,14 @@
 # Change Log
 
+## [1.0.7] -- 2026-04-18
+
+### Column-Aligned Unicode Bar Tooltip
+- **Exact column layout** -- labels left, bars center, pct right, detail far right
+- **Unicode block bars** -- `██████████` filled + `░░░░░░░░░░` empty, 10 chars each
+- **Emojis restored** -- 🆓📅📆⚡💬🔄💸🟢⏳ for clear visual identity
+- **Separator lines** using `────────────────────────`
+- All bars same size (10 blocks), all rows same column widths
+
 ## [1.0.6] -- 2026-04-18
 
 ### Premium Tooltip Layout + SVG Fix
