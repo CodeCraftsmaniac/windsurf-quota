@@ -1,0 +1,491 @@
+const vscode = require('vscode');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+const { execFile } = require('child_process');
+
+let statusBarItem;
+let refreshTimer;
+let lastQuotaData = null;
+let detailPanel = null;
+let dbWatcher = null;
+let _updatePending = false;
+
+// ─── State DB Reader ──────────────────────────────────────────────────────────
+
+function findStateDbPath() {
+    const config = vscode.workspace.getConfiguration('windsurfQuota');
+    const configured = config.get('stateDbPath', '');
+    if (configured && fs.existsSync(configured)) return configured;
+
+    const appData = process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
+    const candidate = path.join(appData, 'Windsurf', 'User', 'globalStorage', 'state.vscdb');
+    if (fs.existsSync(candidate)) return candidate;
+
+    const unixCandidate = path.join(os.homedir(), '.windsurf', 'User', 'globalStorage', 'state.vscdb');
+    if (fs.existsSync(unixCandidate)) return unixCandidate;
+
+    return '';
+}
+
+function readQuotaFromDb(dbPath) {
+    return new Promise((resolve, reject) => {
+        const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
+        const script = `
+import sqlite3, json, sys
+try:
+    db = sqlite3.connect(r'${dbPath.replace(/'/g, "\\'")}')
+    cur = db.cursor()
+    cur.execute("SELECT value FROM ItemTable WHERE key = 'windsurf.settings.cachedPlanInfo'")
+    row = cur.fetchone()
+    plan_info = json.loads(row[0]) if row else None
+    cur.execute("SELECT value FROM ItemTable WHERE key = 'codeium.windsurf'")
+    row = cur.fetchone()
+    config_info = json.loads(row[0]) if row else None
+    db.close()
+    result = {
+        'planInfo': plan_info,
+        'configInfo': {
+            'lastLoginEmail': config_info.get('lastLoginEmail', '') if config_info else '',
+        }
+    }
+    print(json.dumps(result))
+except Exception as e:
+    print(json.dumps({'error': str(e)}))
+    sys.exit(0)
+`;
+        execFile(pythonCmd, ['-c', script], { timeout: 5000 }, (err, stdout, stderr) => {
+            if (err) { reject(new Error(err.message)); return; }
+            try {
+                const data = JSON.parse(stdout.trim());
+                if (data.error) { reject(new Error(data.error)); return; }
+                resolve(data);
+            } catch (e) { reject(new Error(e.message)); }
+        });
+    });
+}
+
+// ─── Quota Formatting ─────────────────────────────────────────────────────────
+
+function formatQuotaData(data) {
+    const plan = data.planInfo;
+    if (!plan) return null;
+    const quota = plan.quotaUsage || {};
+    const usage = plan.usage || {};
+
+    return {
+        planName: plan.planName || 'Unknown',
+        dailyRemaining: quota.dailyRemainingPercent ?? null,
+        dailyResetAt: quota.dailyResetAtUnix ? new Date(quota.dailyResetAtUnix * 1000) : null,
+        hideDaily: plan.hideDailyQuota || false,
+        weeklyRemaining: quota.weeklyRemainingPercent ?? null,
+        weeklyResetAt: quota.weeklyResetAtUnix ? new Date(quota.weeklyResetAtUnix * 1000) : null,
+        hideWeekly: plan.hideWeeklyQuota || false,
+        overageBalanceMicros: quota.overageBalanceMicros ?? 0,
+        overageBalanceDollars: ((quota.overageBalanceMicros || 0) / 1_000_000).toFixed(2),
+        totalMessages: usage.messages ?? 0,
+        usedMessages: usage.usedMessages ?? 0,
+        remainingMessages: usage.remainingMessages ?? 0,
+        totalFlowActions: usage.flowActions ?? 0,
+        usedFlowActions: usage.usedFlowActions ?? 0,
+        remainingFlowActions: usage.remainingFlowActions ?? 0,
+        totalFlexCredits: usage.flexCredits ?? 0,
+        usedFlexCredits: usage.usedFlexCredits ?? 0,
+        remainingFlexCredits: usage.remainingFlexCredits ?? 0,
+        billingStrategy: plan.billingStrategy || '',
+        email: data.configInfo?.lastLoginEmail || '',
+        teamsTier: plan.teamsTier ?? 0,
+    };
+}
+
+function getQuotaIcon(pct) {
+    if (pct === null) return '$(question)';
+    if (pct >= 50) return '$(check)';
+    if (pct >= 20) return '$(warning)';
+    return '$(error)';
+}
+
+function formatResetTime(date) {
+    if (!date) return '?';
+    const diffMs = date - new Date();
+    if (diffMs <= 0) return 'now';
+    const diffH = Math.floor(diffMs / 3600000);
+    const diffM = Math.floor((diffMs % 3600000) / 60000);
+    return diffH > 0 ? `${diffH}h ${diffM}m` : `${diffM}m`;
+}
+
+function formatResetTimeFull(date) {
+    if (!date) return '';
+    return date.toLocaleString();
+}
+
+// ─── Status Bar: Overview Only ────────────────────────────────────────────────
+
+async function updateStatusBar() {
+    if (_updatePending) return;
+    _updatePending = true;
+    try {
+        const dbPath = findStateDbPath();
+        if (!dbPath) {
+            statusBarItem.text = '$(sync-ignored) No Windsurf DB';
+            statusBarItem.tooltip = 'Could not find Windsurf state.vscdb\nSet windsurfQuota.stateDbPath in settings';
+            statusBarItem.show();
+            return;
+        }
+
+        const raw = await readQuotaFromDb(dbPath);
+        const q = formatQuotaData(raw);
+        if (!q) {
+            statusBarItem.text = '$(sync-ignored) No plan data';
+            statusBarItem.tooltip = 'No cached plan info found. Open Windsurf IDE first.';
+            statusBarItem.show();
+            return;
+        }
+
+        lastQuotaData = q;
+
+        // Compact overview: Plan D:% W:% $
+        let parts = [];
+        if (!q.hideDaily && q.dailyRemaining !== null) {
+            parts.push(`D:${q.dailyRemaining}%`);
+        }
+        if (!q.hideWeekly && q.weeklyRemaining !== null) {
+            parts.push(`W:${q.weeklyRemaining}%`);
+        }
+        if (parseFloat(q.overageBalanceDollars) > 0) {
+            parts.push(`$${q.overageBalanceDollars}`);
+        }
+
+        statusBarItem.text = `$(waves) ${q.planName} │ ${parts.join(' · ')}`;
+
+        // Hover tooltip — quick summary
+        const lines = [
+            `**${q.planName} Plan** — ${q.email}`,
+            '',
+        ];
+        if (!q.hideDaily && q.dailyRemaining !== null) {
+            lines.push(`☀ Daily: **${q.dailyRemaining}%** left (resets ${formatResetTime(q.dailyResetAt)})`);
+        }
+        if (!q.hideWeekly && q.weeklyRemaining !== null) {
+            lines.push(`📅 Weekly: **${q.weeklyRemaining}%** left (resets ${formatResetTime(q.weeklyResetAt)})`);
+        }
+        if (parseFloat(q.overageBalanceDollars) > 0) {
+            lines.push(`💰 Overage: **$${q.overageBalanceDollars}**`);
+        }
+        lines.push('');
+        lines.push('---');
+        lines.push(`⚡ Cascade: **${q.remainingMessages}** msgs, **${q.remainingFlowActions}** flows left`);
+        lines.push('');
+        lines.push('*Click for full details →*');
+
+        statusBarItem.tooltip = new vscode.MarkdownString(lines.join('\n\n'));
+        statusBarItem.show();
+
+        // Live-update detail panel if open
+        if (detailPanel) {
+            updateDetailPanel();
+        }
+    } catch (e) {
+        statusBarItem.text = '$(error) Quota error';
+        statusBarItem.tooltip = `Failed: ${e.message}`;
+        statusBarItem.show();
+    } finally {
+        _updatePending = false;
+    }
+}
+
+// ─── Detail Panel: Full Info on Click ─────────────────────────────────────────
+
+function showDetailsPanel() {
+    if (detailPanel) {
+        detailPanel.reveal(vscode.ViewColumn.One);
+        updateDetailPanel();
+        return;
+    }
+
+    detailPanel = vscode.window.createWebviewPanel(
+        'windsurfQuotaDetails',
+        '🌊 Windsurf Quota',
+        vscode.ViewColumn.One,
+        { enableScripts: true, retainContextWhenHidden: true }
+    );
+    detailPanel.iconPath = vscode.Uri.parse('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2358a6ff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>');
+    detailPanel.onDidDispose(() => { detailPanel = null; });
+    updateDetailPanel();
+}
+
+function updateDetailPanel() {
+    if (!detailPanel) return;
+    const q = lastQuotaData;
+    if (!q) {
+        detailPanel.webview.html = '<h2>No quota data yet</h2><p>Waiting for first read...</p>';
+        return;
+    }
+
+    const dailyBar = !q.hideDaily && q.dailyRemaining !== null
+        ? makeBar('☀ Daily Quota', q.dailyRemaining, q.dailyResetAt) : '';
+    const weeklyBar = !q.hideWeekly && q.weeklyRemaining !== null
+        ? makeBar('📅 Weekly Quota', q.weeklyRemaining, q.weeklyResetAt) : '';
+
+    const msgPct = q.totalMessages > 0 ? Math.round((q.remainingMessages / q.totalMessages) * 100) : 0;
+    const flowPct = q.totalFlowActions > 0 ? Math.round((q.remainingFlowActions / q.totalFlowActions) * 100) : 0;
+
+    detailPanel.webview.html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  @keyframes barGrow { from { width: 0; } }
+  @keyframes countUp { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 24px; color: var(--vscode-foreground);
+    background: var(--vscode-editor-background);
+    animation: fadeIn 0.3s ease;
+  }
+  .card {
+    background: var(--vscode-editorWidget-background);
+    border: 1px solid var(--vscode-editorWidget-border);
+    border-radius: 12px; padding: 20px; margin-bottom: 16px;
+    animation: fadeIn 0.4s ease both;
+  }
+  .card:nth-child(2) { animation-delay: 0.05s; }
+  .card:nth-child(3) { animation-delay: 0.1s; }
+  .card:nth-child(4) { animation-delay: 0.15s; }
+  .card:nth-child(5) { animation-delay: 0.2s; }
+  h2 { margin-top: 0; font-size: 15px; font-weight: 600; }
+
+  /* Plan badge */
+  .plan-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 16px; border-radius: 20px;
+    font-size: 14px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .plan-free { background: linear-gradient(135deg, #388bfd33, #58a6ff22); color: #58a6ff; border: 1px solid #58a6ff44; }
+  .plan-pro { background: linear-gradient(135deg, #2ea04333, #7ee78722); color: #7ee787; border: 1px solid #7ee78744; }
+  .plan-ultimate { background: linear-gradient(135deg, #bc8cff33, #d2a8ff22); color: #d2a8ff; border: 1px solid #d2a8ff44; }
+  .plan-team { background: linear-gradient(135deg, #d2992233, #e3b34122); color: #e3b341; border: 1px solid #e3b34144; }
+  .email { font-size: 13px; color: var(--vscode-descriptionForeground); margin-left: 14px; }
+
+  /* Progress bars */
+  .bar-wrap { margin-top: 8px; }
+  .bar-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .bar-label-title { font-size: 14px; font-weight: 600; }
+  .bar-label-pct { font-size: 20px; font-weight: 800; }
+  .bar-track { background: #ffffff0a; border-radius: 8px; height: 32px; overflow: hidden; position: relative; }
+  .bar-fill {
+    height: 100%; border-radius: 8px; display: flex; align-items: center;
+    justify-content: center; font-weight: 700; font-size: 14px; color: #fff;
+    animation: barGrow 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    position: relative; overflow: hidden;
+  }
+  .bar-fill::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite linear;
+  }
+  .bar-green { background: linear-gradient(135deg, #238636, #2ea043); }
+  .bar-yellow { background: linear-gradient(135deg, #9e6a03, #d29922); }
+  .bar-red { background: linear-gradient(135deg, #da3633, #f85149); }
+  .bar-reset { font-size: 11px; color: var(--vscode-descriptionForeground); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .bar-reset .clock { animation: pulse 2s infinite; }
+
+  /* Cascade section */
+  .cascade-section { border-left: 3px solid #58a6ff; padding-left: 16px; }
+  .cascade-title { font-size: 14px; font-weight: 700; color: #58a6ff; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-item {
+    padding: 14px 16px; background: var(--vscode-editor-background);
+    border-radius: 8px; border: 1px solid var(--vscode-editorWidget-border);
+    animation: countUp 0.5s ease both;
+  }
+  .stat-item:nth-child(2) { animation-delay: 0.05s; }
+  .stat-item:nth-child(3) { animation-delay: 0.1s; }
+  .stat-item:nth-child(4) { animation-delay: 0.15s; }
+  .stat-label { font-size: 10px; color: var(--vscode-descriptionForeground); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .stat-value { font-size: 28px; font-weight: 800; line-height: 1.2; }
+  .stat-sub { font-size: 11px; color: var(--vscode-descriptionForeground); margin-top: 4px; }
+  .stat-value.blue { color: #58a6ff; }
+  .stat-value.green { color: #7ee787; }
+  .stat-value.gold { color: #e3b341; }
+  .stat-value.red { color: #ff7b72; }
+
+  /* Mini progress inside stat items */
+  .mini-bar { height: 4px; border-radius: 2px; background: #ffffff0a; margin-top: 8px; overflow: hidden; }
+  .mini-fill { height: 100%; border-radius: 2px; animation: barGrow 0.6s ease both; }
+  .mini-green { background: #2ea043; }
+  .mini-yellow { background: #d29922; }
+  .mini-red { background: #f85149; }
+  .mini-blue { background: #58a6ff; }
+
+  /* Footer */
+  .footer { text-align: center; font-size: 11px; color: var(--vscode-descriptionForeground); margin-top: 20px; opacity: 0.6; }
+  .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #2ea043; animation: pulse 1.5s infinite; margin-right: 4px; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px">
+    <span class="plan-badge plan-${q.planName.toLowerCase()}">🌊 ${q.planName}</span>
+    <span class="email">${q.email}</span>
+  </div>
+</div>
+
+${dailyBar}
+${weeklyBar}
+
+<div class="card cascade-section">
+  <div class="cascade-title">⚡ Cascade</div>
+  <div class="stat-grid">
+    <div class="stat-item">
+      <div class="stat-label">Messages</div>
+      <div class="stat-value ${msgPct >= 50 ? 'green' : msgPct >= 20 ? 'gold' : 'red'}">${q.remainingMessages}</div>
+      <div class="stat-sub">${q.usedMessages} used of ${q.totalMessages}</div>
+      <div class="mini-bar"><div class="mini-fill mini-${msgPct >= 50 ? 'green' : msgPct >= 20 ? 'yellow' : 'red'}" style="width:${msgPct}%"></div></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Flow Actions</div>
+      <div class="stat-value ${flowPct >= 50 ? 'green' : flowPct >= 20 ? 'gold' : 'red'}">${q.remainingFlowActions}</div>
+      <div class="stat-sub">${q.usedFlowActions} used of ${q.totalFlowActions}</div>
+      <div class="mini-bar"><div class="mini-fill mini-${flowPct >= 50 ? 'green' : flowPct >= 20 ? 'yellow' : 'red'}" style="width:${flowPct}%"></div></div>
+    </div>
+    ${q.totalFlexCredits > 0 ? `
+    <div class="stat-item">
+      <div class="stat-label">Flex Credits</div>
+      <div class="stat-value blue">${q.remainingFlexCredits}</div>
+      <div class="stat-sub">${q.usedFlexCredits} used of ${q.totalFlexCredits}</div>
+    </div>` : ''}
+    <div class="stat-item">
+      <div class="stat-label">Overage Balance</div>
+      <div class="stat-value blue">$${q.overageBalanceDollars}</div>
+      <div class="stat-sub">Pay-per-use credits</div>
+      <div class="mini-bar"><div class="mini-fill mini-blue" style="width:100%"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="padding:12px 20px">
+  <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--vscode-descriptionForeground)">
+    <span><span class="live-dot"></span> Live — updates in real-time</span>
+    <span>Billing: ${q.billingStrategy}</span>
+  </div>
+</div>
+
+<div class="footer">Windsurf Quota Widget v1.0 · Click status bar to refresh</div>
+
+</body>
+</html>`;
+}
+
+function makeBar(label, pct, resetAt) {
+    const color = pct >= 50 ? 'green' : pct >= 20 ? 'yellow' : 'red';
+    const resetText = resetAt ? `⏱ Resets in ${formatResetTime(resetAt)} (${formatResetTimeFull(resetAt)})` : '';
+    return `<div class="card">
+  <div class="bar-wrap">
+    <div class="bar-label">
+      <span class="bar-label-title">${label}</span>
+      <span class="bar-label-pct" style="color:var(--vscode-foreground)">${pct}%</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill bar-${color}" style="width:${Math.max(pct, 3)}%">${pct}%</div>
+    </div>
+    ${resetText ? `<div class="bar-reset"><span class="clock">⏱</span> ${resetText}</div>` : ''}
+  </div>
+</div>`;
+}
+
+// ─── Real-time DB Watcher ──────────────────────────────────────────────────────
+
+function startDbWatcher(context) {
+    const dbPath = findStateDbPath();
+    if (!dbPath) return;
+
+    let lastMtime = 0;
+
+    try {
+        dbWatcher = fs.watch(dbPath, (event) => {
+            if (event === 'change') {
+                updateStatusBar();
+            }
+        });
+        context.subscriptions.push({ dispose: () => dbWatcher?.close() });
+    } catch {
+        const pollId = setInterval(() => {
+            try {
+                const stat = fs.statSync(dbPath);
+                const mtime = stat.mtimeMs;
+                if (mtime !== lastMtime) {
+                    lastMtime = mtime;
+                    updateStatusBar();
+                }
+            } catch {}
+        }, 2000);
+        context.subscriptions.push({ dispose: () => clearInterval(pollId) });
+    }
+}
+
+// ─── Activation ───────────────────────────────────────────────────────────────
+
+function activate(context) {
+    // Status bar: click opens detail panel
+    statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+    statusBarItem.command = 'windsurfQuota.showDetails';
+    statusBarItem.text = '$(sync~spin) Windsurf...';
+    statusBarItem.show();
+    context.subscriptions.push(statusBarItem);
+
+    // Refresh command
+    context.subscriptions.push(
+        vscode.commands.registerCommand('windsurfQuota.refresh', async () => {
+            statusBarItem.text = '$(sync~spin) Syncing...';
+            await updateStatusBar();
+            vscode.window.setStatusBarMessage('$(check) Quota updated', 2000);
+        })
+    );
+
+    // Click status bar → show details
+    context.subscriptions.push(
+        vscode.commands.registerCommand('windsurfQuota.showDetails', async () => {
+            await updateStatusBar();
+            showDetailsPanel();
+        })
+    );
+
+    // Real-time: watch DB file for instant updates
+    startDbWatcher(context);
+
+    // Fallback poll every 15s
+    const config = vscode.workspace.getConfiguration('windsurfQuota');
+    const interval = config.get('refreshIntervalSeconds', 15) * 1000;
+    refreshTimer = setInterval(updateStatusBar, interval);
+    context.subscriptions.push({ dispose: () => clearInterval(refreshTimer) });
+
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration('windsurfQuota')) {
+                clearInterval(refreshTimer);
+                const newConfig = vscode.workspace.getConfiguration('windsurfQuota');
+                const newInterval = newConfig.get('refreshIntervalSeconds', 15) * 1000;
+                refreshTimer = setInterval(updateStatusBar, newInterval);
+                updateStatusBar();
+            }
+        })
+    );
+
+    updateStatusBar();
+}
+
+function deactivate() {
+    if (refreshTimer) clearInterval(refreshTimer);
+    if (dbWatcher) dbWatcher.close();
+}
+
+module.exports = { activate, deactivate };

@@ -1,0 +1,8 @@
+.gitignore
+.vscodeignore
+make_icon.py
+make_demo_images.py
+test_quota.py
+icon.svg
+*.vsix
+node_modules/

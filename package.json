@@ -1,0 +1,67 @@
+{
+  "name": "windsurf-quota",
+  "displayName": "🌊 Windsurf Quota — Real-Time AI Usage Tracker",
+  "description": "Track Windsurf AI quotas in real-time — daily, weekly, Cascade messages, flow actions, and overage balance. Zero login. Zero config. Click for full details.",
+  "version": "1.0.1",
+  "publisher": "CodeCraftsmaniac",
+  "license": "MIT",
+  "homepage": "https://github.com/CodeCraftsmaniac/windsurf-quota#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CodeCraftsmaniac/windsurf-quota.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CodeCraftsmaniac/windsurf-quota/issues"
+  },
+  "keywords": [
+    "windsurf",
+    "quota",
+    "cascade",
+    "ai",
+    "usage",
+    "daily",
+    "weekly",
+    "overage",
+    "status bar",
+    "real-time",
+    "codeium",
+    "flow actions",
+    "messages"
+  ],
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#0d1117",
+    "theme": "dark"
+  },
+  "engines": { "vscode": "^1.75.0" },
+  "categories": ["Other", "Visualization", "Programming Languages"],
+  "activationEvents": ["*"],
+  "main": "./extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "🌊 Windsurf Quota",
+      "properties": {
+        "windsurfQuota.refreshIntervalSeconds": {
+          "type": "number",
+          "default": 15,
+          "description": "How often to re-read quota from the state DB (seconds). Real-time file watching is also active."
+        },
+        "windsurfQuota.stateDbPath": {
+          "type": "string",
+          "default": "",
+          "description": "Full path to Windsurf's state.vscdb. Auto-detected if empty."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "windsurfQuota.refresh",
+        "title": "🌊 Windsurf Quota: Refresh Now"
+      },
+      {
+        "command": "windsurfQuota.showDetails",
+        "title": "🌊 Windsurf Quota: Show Details"
+      }
+    ]
+  }
+}
