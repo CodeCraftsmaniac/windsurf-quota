@@ -112,79 +112,57 @@ function formatResetTimeFull(date) {
     return date.toLocaleString();
 }
 
-// ─── Premium Tooltip Builder ──────────────────────────────────────────────────
+// ─── Premium Tooltip Builder (Unicode bars — works in all VS Code tooltips) ──────
 
 function buildTooltip(q) {
     const md = new vscode.MarkdownString();
     md.isTrusted = true;
     md.supportHtml = true;
 
-    const barColor = (pct) => pct >= 50 ? '#2ea043' : pct >= 20 ? '#d29922' : '#f85149';
-    const barBg = '#30363d';
-    const makeHtmlBar = (pct, width = 180) => {
-        const fillW = Math.max(Math.round(pct * width / 100), 4);
-        const c = barColor(pct);
-        return `<span style="display:inline-block;width:${width}px;height:10px;background:${barBg};border-radius:5px;vertical-align:middle;overflow:hidden"><span style="display:inline-block;width:${fillW}px;height:10px;background:${c};border-radius:5px"></span></span> <b>${pct}%</b>`;
+    const uniBar = (pct, len = 20) => {
+        const filled = Math.max(Math.round(pct * len / 100), 1);
+        const empty = len - filled;
+        const color = pct >= 50 ? '🟩' : pct >= 20 ? '🟨' : '🟥';
+        const dim = '⬜';
+        return color.repeat(filled) + dim.repeat(empty);
     };
 
-    let html = '';
+    let lines = [];
 
-    // Header
-    html += `<div style="margin-bottom:8px">`;
-    html += `<b style="font-size:14px">🌊 ${q.planName} Plan</b>`;
-    html += ` <span style="color:#8b949e;font-size:11px">${q.email}</span>`;
-    html += `</div>`;
+    lines.push(`**🌊 ${q.planName} Plan**  —  ${q.email}`);
+    lines.push('');
 
-    // Daily bar
     if (!q.hideDaily && q.dailyRemaining !== null) {
-        html += `<div style="margin-bottom:6px">`;
-        html += `<span style="color:#8b949e;font-size:11px">☀ Daily</span><br>`;
-        html += makeHtmlBar(q.dailyRemaining);
-        html += ` <span style="color:#8b949e;font-size:10px">⏱ ${formatResetTime(q.dailyResetAt)}</span>`;
-        html += `</div>`;
+        lines.push(`☀ **Daily**  ${uniBar(q.dailyRemaining)}  **${q.dailyRemaining}%**`);
+        lines.push(`　 ⏱ Resets in ${formatResetTime(q.dailyResetAt)}`);
+        lines.push('');
     }
 
-    // Weekly bar
     if (!q.hideWeekly && q.weeklyRemaining !== null) {
-        html += `<div style="margin-bottom:6px">`;
-        html += `<span style="color:#8b949e;font-size:11px">📅 Weekly</span><br>`;
-        html += makeHtmlBar(q.weeklyRemaining);
-        html += ` <span style="color:#8b949e;font-size:10px">⏱ ${formatResetTime(q.weeklyResetAt)}</span>`;
-        html += `</div>`;
+        lines.push(`📅 **Weekly**  ${uniBar(q.weeklyRemaining)}  **${q.weeklyRemaining}%**`);
+        lines.push(`　 ⏱ Resets in ${formatResetTime(q.weeklyResetAt)}`);
+        lines.push('');
     }
 
-    // Cascade section
     const msgPct = q.totalMessages > 0 ? Math.round((q.remainingMessages / q.totalMessages) * 100) : 0;
     const flowPct = q.totalFlowActions > 0 ? Math.round((q.remainingFlowActions / q.totalFlowActions) * 100) : 0;
 
-    html += `<hr style="border:none;border-top:1px solid #30363d;margin:8px 0">`;
-    html += `<div style="border-left:2px solid #58a6ff;padding-left:8px">`;
-    html += `<b style="color:#58a6ff;font-size:11px">⚡ CASCADE</b><br>`;
-
-    html += `<span style="color:#8b949e;font-size:11px">Messages</span> `;
-    html += makeHtmlBar(msgPct, 120);
-    html += ` <span style="font-size:10px">${q.remainingMessages}/${q.totalMessages}</span><br>`;
-
-    html += `<span style="color:#8b949e;font-size:11px">Flows</span> `;
-    html += makeHtmlBar(flowPct, 120);
-    html += ` <span style="font-size:10px">${q.remainingFlowActions}/${q.totalFlowActions}</span>`;
-
+    lines.push('---');
+    lines.push(`⚡ **CASCADE**`);
+    lines.push(`　 Messages  ${uniBar(msgPct, 12)}  **${q.remainingMessages}** / ${q.totalMessages}`);
+    lines.push(`　 Flows　  ${uniBar(flowPct, 12)}  **${q.remainingFlowActions}** / ${q.totalFlowActions}`);
     if (q.totalFlexCredits > 0) {
-        html += `<br><span style="color:#8b949e;font-size:11px">Flex</span> <b>${q.remainingFlexCredits}</b>/<span style="font-size:10px">${q.totalFlexCredits}</span>`;
+        lines.push(`　 Flex　　**${q.remainingFlexCredits}** / ${q.totalFlexCredits}`);
     }
 
-    html += `</div>`;
-
-    // Overage
     if (parseFloat(q.overageBalanceDollars) > 0) {
-        html += `<div style="margin-top:6px"><span style="color:#58a6ff;font-size:12px">💰 $${q.overageBalanceDollars}</span> <span style="color:#8b949e;font-size:10px">overage</span></div>`;
+        lines.push(`💰 **$${q.overageBalanceDollars}** overage`);
     }
 
-    // Footer
-    html += `<hr style="border:none;border-top:1px solid #30363d;margin:8px 0">`;
-    html += `<span style="color:#8b949e;font-size:10px">🟢 Live · Billing: ${q.billingStrategy}</span>`;
+    lines.push('---');
+    lines.push(`🟢 Live · Billing: ${q.billingStrategy}`);
 
-    md.appendMarkdown(html);
+    md.appendMarkdown(lines.join('\n\n'));
     return md;
 }
 
@@ -257,7 +235,7 @@ function showDetailsPanel() {
         'windsurfQuotaDetails',
         '🌊 Windsurf Quota',
         vscode.ViewColumn.One,
-        { enableScripts: true, retainContextWhenHidden: true }
+        { enableScripts: true, retainContextWhenHidden: true, preserveFocus: true }
     );
     detailPanel.iconPath = vscode.Uri.parse('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2358a6ff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>');
     detailPanel.onDidDispose(() => { detailPanel = null; });
@@ -286,145 +264,219 @@ function updateDetailPanel() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+  @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes panelSlideIn { from { opacity: 0; transform: translateY(-30px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
   @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
   @keyframes barGrow { from { width: 0; } }
-  @keyframes countUp { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+  @keyframes countPop { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+  @keyframes glow { 0%, 100% { box-shadow: 0 0 8px rgba(88,166,255,0.2); } 50% { box-shadow: 0 0 20px rgba(88,166,255,0.4); } }
+  @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    padding: 24px; color: var(--vscode-foreground);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    color: var(--vscode-foreground);
     background: var(--vscode-editor-background);
-    animation: fadeIn 0.3s ease;
+    overflow: hidden;
+    height: 100vh;
   }
-  .card {
+
+  .overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 40px;
+    animation: overlayIn 0.25s ease;
+    z-index: 999;
+  }
+
+  .panel {
+    width: 580px; max-height: calc(100vh - 80px);
+    overflow-y: auto; overflow-x: hidden;
     background: var(--vscode-editorWidget-background);
     border: 1px solid var(--vscode-editorWidget-border);
-    border-radius: 12px; padding: 20px; margin-bottom: 16px;
-    animation: fadeIn 0.4s ease both;
+    border-radius: 16px;
+    padding: 28px;
+    animation: panelSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 40px rgba(88,166,255,0.08);
   }
-  .card:nth-child(2) { animation-delay: 0.05s; }
-  .card:nth-child(3) { animation-delay: 0.1s; }
-  .card:nth-child(4) { animation-delay: 0.15s; }
-  .card:nth-child(5) { animation-delay: 0.2s; }
-  h2 { margin-top: 0; font-size: 15px; font-weight: 600; }
 
+  .panel::-webkit-scrollbar { width: 6px; }
+  .panel::-webkit-scrollbar-track { background: transparent; }
+  .panel::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+
+  .card {
+    background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-editorWidget-border);
+    border-radius: 12px; padding: 18px; margin-bottom: 14px;
+    animation: panelSlideIn 0.4s ease both;
+  }
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4) { animation-delay: 0.2s; }
+  .card:nth-child(5) { animation-delay: 0.25s; }
+
+  /* Plan badge */
   .plan-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 16px; border-radius: 20px;
-    font-size: 14px; font-weight: 800; text-transform: uppercase;
-    letter-spacing: 1px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 20px; border-radius: 24px;
+    font-size: 15px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1.5px;
+    animation: glow 3s infinite, countPop 0.5s ease both;
   }
-  .plan-free { background: linear-gradient(135deg, #388bfd33, #58a6ff22); color: #58a6ff; border: 1px solid #58a6ff44; }
-  .plan-pro { background: linear-gradient(135deg, #2ea04333, #7ee78722); color: #7ee787; border: 1px solid #7ee78744; }
-  .plan-ultimate { background: linear-gradient(135deg, #bc8cff33, #d2a8ff22); color: #d2a8ff; border: 1px solid #d2a8ff44; }
-  .plan-team { background: linear-gradient(135deg, #d2992233, #e3b34122); color: #e3b341; border: 1px solid #e3b34144; }
-  .email { font-size: 13px; color: var(--vscode-descriptionForeground); margin-left: 14px; }
+  .plan-free { background: linear-gradient(135deg, #388bfd44, #58a6ff22); color: #58a6ff; border: 1px solid #58a6ff55; }
+  .plan-pro { background: linear-gradient(135deg, #2ea04344, #7ee78722); color: #7ee787; border: 1px solid #7ee78755; }
+  .plan-ultimate { background: linear-gradient(135deg, #bc8cff44, #d2a8ff22); color: #d2a8ff; border: 1px solid #d2a8ff55; }
+  .plan-team { background: linear-gradient(135deg, #d2992244, #e3b34122); color: #e3b341; border: 1px solid #e3b34155; }
+  .email { font-size: 12px; color: var(--vscode-descriptionForeground); margin-left: 16px; }
 
-  .bar-wrap { margin-top: 8px; }
-  .bar-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  /* Progress bars */
+  .bar-wrap { margin-top: 10px; }
+  .bar-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
   .bar-label-title { font-size: 14px; font-weight: 600; }
-  .bar-label-pct { font-size: 20px; font-weight: 800; }
-  .bar-track { background: #ffffff0a; border-radius: 8px; height: 32px; overflow: hidden; position: relative; }
+  .bar-label-pct { font-size: 24px; font-weight: 900; }
+  .bar-track {
+    background: linear-gradient(90deg, #21262d, #30363d);
+    border-radius: 10px; height: 36px; overflow: hidden; position: relative;
+    border: 1px solid #30363d66;
+  }
   .bar-fill {
-    height: 100%; border-radius: 8px; display: flex; align-items: center;
-    justify-content: center; font-weight: 700; font-size: 14px; color: #fff;
-    animation: barGrow 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    height: 100%; border-radius: 10px; display: flex; align-items: center;
+    justify-content: center; font-weight: 800; font-size: 15px; color: #fff;
+    animation: barGrow 1s cubic-bezier(0.22, 1, 0.36, 1) both;
     position: relative; overflow: hidden;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
   }
   .bar-fill::after {
     content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
     background-size: 200% 100%;
-    animation: shimmer 3s infinite linear;
+    animation: shimmer 2.5s infinite linear;
   }
-  .bar-green { background: linear-gradient(135deg, #238636, #2ea043); }
-  .bar-yellow { background: linear-gradient(135deg, #9e6a03, #d29922); }
-  .bar-red { background: linear-gradient(135deg, #da3633, #f85149); }
-  .bar-reset { font-size: 11px; color: var(--vscode-descriptionForeground); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .bar-green { background: linear-gradient(90deg, #238636, #2ea043, #3fb950); }
+  .bar-yellow { background: linear-gradient(90deg, #9e6a03, #d29922, #e3b341); }
+  .bar-red { background: linear-gradient(90deg, #da3633, #f85149, #ff7b72); }
+  .bar-reset {
+    font-size: 11px; color: var(--vscode-descriptionForeground); margin-top: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
   .bar-reset .clock { animation: pulse 2s infinite; }
 
-  .cascade-section { border-left: 3px solid #58a6ff; padding-left: 16px; }
-  .cascade-title { font-size: 14px; font-weight: 700; color: #58a6ff; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+  /* Cascade section */
+  .cascade-section {
+    border-left: 3px solid transparent;
+    border-image: linear-gradient(180deg, #58a6ff, #bc8cff) 1;
+    padding-left: 18px;
+  }
+  .cascade-title {
+    font-size: 13px; font-weight: 800; margin-bottom: 16px;
+    text-transform: uppercase; letter-spacing: 2px;
+    display: flex; align-items: center; gap: 8px;
+    background: linear-gradient(90deg, #58a6ff, #bc8cff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .stat-item {
-    padding: 14px 16px; background: var(--vscode-editor-background);
-    border-radius: 8px; border: 1px solid var(--vscode-editorWidget-border);
-    animation: countUp 0.5s ease both;
+    padding: 16px; background: var(--vscode-editor-background);
+    border-radius: 10px; border: 1px solid var(--vscode-editorWidget-border);
+    animation: countPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transition: border-color 0.2s;
   }
-  .stat-item:nth-child(2) { animation-delay: 0.05s; }
-  .stat-item:nth-child(3) { animation-delay: 0.1s; }
-  .stat-item:nth-child(4) { animation-delay: 0.15s; }
-  .stat-label { font-size: 10px; color: var(--vscode-descriptionForeground); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
-  .stat-value { font-size: 28px; font-weight: 800; line-height: 1.2; }
+  .stat-item:hover { border-color: #58a6ff55; }
+  .stat-item:nth-child(1) { animation-delay: 0.1s; }
+  .stat-item:nth-child(2) { animation-delay: 0.15s; }
+  .stat-item:nth-child(3) { animation-delay: 0.2s; }
+  .stat-item:nth-child(4) { animation-delay: 0.25s; }
+  .stat-label { font-size: 10px; color: var(--vscode-descriptionForeground); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .stat-value { font-size: 32px; font-weight: 900; line-height: 1.1; }
   .stat-sub { font-size: 11px; color: var(--vscode-descriptionForeground); margin-top: 4px; }
   .stat-value.blue { color: #58a6ff; }
   .stat-value.green { color: #7ee787; }
   .stat-value.gold { color: #e3b341; }
   .stat-value.red { color: #ff7b72; }
 
-  .mini-bar { height: 4px; border-radius: 2px; background: #ffffff0a; margin-top: 8px; overflow: hidden; }
-  .mini-fill { height: 100%; border-radius: 2px; animation: barGrow 0.6s ease both; }
-  .mini-green { background: #2ea043; }
-  .mini-yellow { background: #d29922; }
-  .mini-red { background: #f85149; }
-  .mini-blue { background: #58a6ff; }
+  .mini-bar { height: 4px; border-radius: 2px; background: #21262d; margin-top: 10px; overflow: hidden; }
+  .mini-fill { height: 100%; border-radius: 2px; animation: barGrow 0.8s ease both; }
+  .mini-green { background: linear-gradient(90deg, #238636, #2ea043); }
+  .mini-yellow { background: linear-gradient(90deg, #9e6a03, #d29922); }
+  .mini-red { background: linear-gradient(90deg, #da3633, #f85149); }
+  .mini-blue { background: linear-gradient(90deg, #388bfd, #58a6ff); }
 
-  .footer { text-align: center; font-size: 11px; color: var(--vscode-descriptionForeground); margin-top: 20px; opacity: 0.6; }
-  .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #2ea043; animation: pulse 1.5s infinite; margin-right: 4px; vertical-align: middle; }
+  /* Footer */
+  .footer-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 18px; background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-editorWidget-border);
+    border-radius: 10px; font-size: 12px; color: var(--vscode-descriptionForeground);
+  }
+  .live-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: #2ea043; animation: pulse 1.5s infinite;
+    margin-right: 6px; vertical-align: middle;
+    box-shadow: 0 0 6px #2ea04366;
+  }
+  .footer-text { text-align: center; font-size: 10px; color: var(--vscode-descriptionForeground); margin-top: 16px; opacity: 0.5; }
 </style>
 </head>
 <body>
 
-<div class="card">
-  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px">
-    <span class="plan-badge plan-${q.planName.toLowerCase()}">🌊 ${q.planName}</span>
-    <span class="email">${q.email}</span>
-  </div>
-</div>
+<div class="overlay">
+<div class="panel">
 
-${dailyBar}
-${weeklyBar}
-
-<div class="card cascade-section">
-  <div class="cascade-title">⚡ Cascade</div>
-  <div class="stat-grid">
-    <div class="stat-item">
-      <div class="stat-label">Messages</div>
-      <div class="stat-value ${msgPct >= 50 ? 'green' : msgPct >= 20 ? 'gold' : 'red'}">${q.remainingMessages}</div>
-      <div class="stat-sub">${q.usedMessages} used of ${q.totalMessages}</div>
-      <div class="mini-bar"><div class="mini-fill mini-${msgPct >= 50 ? 'green' : msgPct >= 20 ? 'yellow' : 'red'}" style="width:${msgPct}%"></div></div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">Flow Actions</div>
-      <div class="stat-value ${flowPct >= 50 ? 'green' : flowPct >= 20 ? 'gold' : 'red'}">${q.remainingFlowActions}</div>
-      <div class="stat-sub">${q.usedFlowActions} used of ${q.totalFlowActions}</div>
-      <div class="mini-bar"><div class="mini-fill mini-${flowPct >= 50 ? 'green' : flowPct >= 20 ? 'yellow' : 'red'}" style="width:${flowPct}%"></div></div>
-    </div>
-    ${q.totalFlexCredits > 0 ? `
-    <div class="stat-item">
-      <div class="stat-label">Flex Credits</div>
-      <div class="stat-value blue">${q.remainingFlexCredits}</div>
-      <div class="stat-sub">${q.usedFlexCredits} used of ${q.totalFlexCredits}</div>
-    </div>` : ''}
-    <div class="stat-item">
-      <div class="stat-label">Overage Balance</div>
-      <div class="stat-value blue">$${q.overageBalanceDollars}</div>
-      <div class="stat-sub">Pay-per-use credits</div>
-      <div class="mini-bar"><div class="mini-fill mini-blue" style="width:100%"></div></div>
+  <div class="card">
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px">
+      <span class="plan-badge plan-${q.planName.toLowerCase()}">🌊 ${q.planName}</span>
+      <span class="email">${q.email}</span>
     </div>
   </div>
-</div>
 
-<div class="card" style="padding:12px 20px">
-  <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--vscode-descriptionForeground)">
-    <span><span class="live-dot"></span> Live — updates in real-time</span>
+  ${dailyBar}
+  ${weeklyBar}
+
+  <div class="card cascade-section">
+    <div class="cascade-title">⚡ CASCADE</div>
+    <div class="stat-grid">
+      <div class="stat-item">
+        <div class="stat-label">Messages</div>
+        <div class="stat-value ${msgPct >= 50 ? 'green' : msgPct >= 20 ? 'gold' : 'red'}">${q.remainingMessages}</div>
+        <div class="stat-sub">${q.usedMessages} used of ${q.totalMessages}</div>
+        <div class="mini-bar"><div class="mini-fill mini-${msgPct >= 50 ? 'green' : msgPct >= 20 ? 'yellow' : 'red'}" style="width:${msgPct}%"></div></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Flow Actions</div>
+        <div class="stat-value ${flowPct >= 50 ? 'green' : flowPct >= 20 ? 'gold' : 'red'}">${q.remainingFlowActions}</div>
+        <div class="stat-sub">${q.usedFlowActions} used of ${q.totalFlowActions}</div>
+        <div class="mini-bar"><div class="mini-fill mini-${flowPct >= 50 ? 'green' : flowPct >= 20 ? 'yellow' : 'red'}" style="width:${flowPct}%"></div></div>
+      </div>
+      ${q.totalFlexCredits > 0 ? `
+      <div class="stat-item">
+        <div class="stat-label">Flex Credits</div>
+        <div class="stat-value blue">${q.remainingFlexCredits}</div>
+        <div class="stat-sub">${q.usedFlexCredits} used of ${q.totalFlexCredits}</div>
+      </div>` : ''}
+      <div class="stat-item">
+        <div class="stat-label">Overage Balance</div>
+        <div class="stat-value blue">$${q.overageBalanceDollars}</div>
+        <div class="stat-sub">Pay-per-use credits</div>
+        <div class="mini-bar"><div class="mini-fill mini-blue" style="width:100%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <span><span class="live-dot"></span> Live — real-time</span>
     <span>Billing: ${q.billingStrategy}</span>
   </div>
-</div>
 
-<div class="footer">Windsurf Quota Widget v1.0</div>
+  <div class="footer-text">Windsurf Quota v1.0</div>
+
+</div>
+</div>
 
 </body>
 </html>`;
@@ -480,15 +532,14 @@ function startDbWatcher(context) {
 // ─── Activation ───────────────────────────────────────────────────────────────
 
 function activate(context) {
-    // Status bar — NO click action, hover shows premium tooltip
+    // Status bar — hover shows Unicode bar tooltip, click opens premium panel
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
     statusBarItem.text = '$(sync~spin) Windsurf...';
+    statusBarItem.command = 'windsurfQuota.showDetails';
     statusBarItem.show();
     context.subscriptions.push(statusBarItem);
 
-    // Refresh command (click does refresh only)
-    statusBarItem.command = 'windsurfQuota.refresh';
-
+    // Refresh command
     context.subscriptions.push(
         vscode.commands.registerCommand('windsurfQuota.refresh', async () => {
             statusBarItem.text = '$(sync~spin) Syncing...';
@@ -497,7 +548,7 @@ function activate(context) {
         })
     );
 
-    // Detail panel only via command palette
+    // Click status bar → premium detail panel
     context.subscriptions.push(
         vscode.commands.registerCommand('windsurfQuota.showDetails', async () => {
             await updateStatusBar();

@@ -1,5 +1,15 @@
 # Change Log
 
+## [1.0.3] — 2026-04-18
+
+### 🎨 Premium UI Overhaul
+- **Hover tooltip**: Clean Unicode emoji bars (🟩🟨🟥⬜) — works perfectly in all VS Code tooltips
+- **Click panel**: Premium overlay with blur background, slide-in animation, glowing plan badge
+- Gradient progress bars with shimmer effects
+- Cascade section with gradient border + gradient title text
+- Stat items with hover glow effect
+- Larger fonts, better spacing, premium feel
+
 ## [1.0.2] — 2026-04-18
 
 ### 🎯 Premium Hover Tooltip
