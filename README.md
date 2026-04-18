@@ -1,6 +1,6 @@
 # Windsurf Quota -- Real-Time AI Usage Tracker
 
-<img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/icon.svg" width="48" height="48" align="left" style="margin-right:12px">
+<img src="https://raw.githubusercontent.com/CodeCraftsmaniac/windsurf-quota/main/images/icon.png" width="48" height="48" align="left" style="margin-right:12px">
 
 **Zero login. Zero config. Zero delay.**
 
